@@ -1,14 +1,62 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
+
+	_ "github.com/glebarez/go-sqlite"
 )
 
 func main() {
+	db, err := connect_db("/Users/lad/Developer/SWE-Project-2025/data/db.sqlite3")
+
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+
+	add_user("Amoniker", db)
+	add_user("kim", db) // error handling?
+	add_user("harry", db)
+
+	result, _ := db.Exec("SELECT username, wins FROM leaderboard ORDER BY wins DESC; ")
+
+	fmt.Print(result)
+
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+// add_user adds the given user to the leaderboard table in the database with zero wins.
+func add_user(username string, db *sql.DB) error {
+	add_user := "INSERT INTO leaderboard (username, wins) VALUES ( ?, 0)"
+	_, err := db.Exec(add_user, username)
+
+	return err
+}
+
+func connect_db(path string) (*sql.DB, error) {
+	// How to update this?
+	db, err := sql.Open("sqlite", path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("Connected to the SQLite database successfully.")
+
+	var sqliteVersion string
+	err = db.QueryRow("select sqlite_version()").Scan(&sqliteVersion)
+
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(sqliteVersion)
+
+	return db, err
 }
 
 // handle incoming requests and write a response to client
