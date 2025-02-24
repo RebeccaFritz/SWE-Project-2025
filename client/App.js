@@ -6,8 +6,10 @@ export default function App() {
     const [ws, setWS] = useState(null);
 
     useEffect(() => {
+        // create WebSocket at the server port
         const socket = new WebSocket('ws://localhost:8080/ws');
 
+        // open WebSocket
         socket.onopen = () => {
             console.log('WebSocket connection established');
             socket.send(JSON.stringify({
@@ -15,16 +17,18 @@ export default function App() {
             }))
         };
 
+        // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event) => {
             console.log('Message received: ', event.data);
             setMessage(JSON.parse(event.data).message);
         };
 
+        // handle severed connection
         socket.onclose = () => {
             console.log('Websocket connection closed');
         }
 
-        setWS(socket);
+        setWS(socket); // add the WebSocket to the state
 
         return () => {
             socket.close();
@@ -32,6 +36,7 @@ export default function App() {
     }, []);
 
     return (
+        // display the message from the server
         <div>WebSocket Client Received message: {message}</div>
     );
 }
