@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
 	"github.com/gorilla/websocket"
+  _ "github.com/glebarez/go-sqlite"
 )
 
 // variable used to upgrade HTTP connections to WebSocket connections
@@ -42,10 +42,26 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-// handle incoming requests and write a response to client
-// func handler(w http.ResponseWriter, r *http.Request) {
-//  fmt.Fprintf(w, "Hello, client!")
-// }
+// use go run *.go, otherwise it wont run all the files
+
+func main() {
+	db, err := connect_db("/Users/lad/Developer/SWE-Project-2025/data/db.sqlite3")
+
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+
+	// test calls
+	add_user("Amoniker", db)
+	add_user("kim", db)
+	add_user("harry", db)
+	increment_wins("Amoniker", db)
+  
+  http.HandleFunc("/ws", wsHandler)
+	fmt.Println("WebSocket server started on :8080")
+	http.ListenAndServe(":8080", nil)
+}
 
 // the Gameroom struct contains all the information for one game
 type Gameroom struct {
@@ -68,11 +84,4 @@ type Client struct {
 	score    int
 	health   int    // current health
 	position [2]int // position as the token would appear on THIS player's screen
-}
-
-func main() {
-	// http.HandleFunc("/", handler)
-	http.HandleFunc("/ws", wsHandler)
-	fmt.Println("WebSocket server started on :8080")
-	http.ListenAndServe(":8080", nil)
 }
