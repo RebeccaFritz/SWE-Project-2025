@@ -18583,35 +18583,40 @@ function App() {
     const [message, setMessage] = (0, _react.useState)('');
     const [ws, setWS] = (0, _react.useState)(null);
     (0, _react.useEffect)(()=>{
+        // create WebSocket at the server port
         const socket = new WebSocket('ws://localhost:8080/ws');
+        // open WebSocket
         socket.onopen = ()=>{
             console.log('WebSocket connection established');
             socket.send(JSON.stringify({
                 message: "Hello!"
             }));
         };
+        // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event)=>{
             console.log('Message received: ', event.data);
             setMessage(JSON.parse(event.data).message);
         };
+        // handle severed connection
         socket.onclose = ()=>{
             console.log('Websocket connection closed');
         };
-        setWS(socket);
+        setWS(socket); // add the WebSocket to the state
         return ()=>{
             socket.close();
         };
     }, []);
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+    return(// display the message from the server
+    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         children: [
             "WebSocket Client Received message: ",
             message
         ]
     }, void 0, true, {
         fileName: "App.js",
-        lineNumber: 35,
+        lineNumber: 40,
         columnNumber: 9
-    }, this);
+    }, this));
 }
 _s(App, "OUPjobJT8pNuiZI3iA4cRy6eEwg=");
 _c = App;
