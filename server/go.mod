@@ -2,6 +2,7 @@ module github.com/RebeccaFritz/SWE-Project-2025/server
 
 go 1.24.0
 
+require github.com/gorilla/websocket v1.5.3 // indirect
 require github.com/glebarez/go-sqlite v1.22.0
 
 require (
