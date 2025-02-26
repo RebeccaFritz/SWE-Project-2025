@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	_ "github.com/glebarez/go-sqlite"
 	"github.com/gorilla/websocket"
-  _ "github.com/glebarez/go-sqlite"
 )
 
 // variable used to upgrade HTTP connections to WebSocket connections
@@ -45,7 +46,7 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 // use go run *.go, otherwise it wont run all the files
 
 func main() {
-	db, err := connect_db("/Users/lad/Developer/SWE-Project-2025/data/db.sqlite3")
+	db, err := connect_db("../data/db.sqlite")
 
 	if err != nil {
 		fmt.Print(err)
@@ -57,8 +58,8 @@ func main() {
 	add_user("kim", db)
 	add_user("harry", db)
 	increment_wins("Amoniker", db)
-  
-  http.HandleFunc("/ws", wsHandler)
+
+	http.HandleFunc("/ws", wsHandler)
 	fmt.Println("WebSocket server started on :8080")
 	http.ListenAndServe(":8080", nil)
 }
