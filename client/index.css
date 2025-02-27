@@ -14,9 +14,11 @@ body {
 
 * {box-sizing: border-box;}
 
-header,article {background-color: goldenrod;}
+header, article {background-color: goldenrod;}
 
 header {border: 1px solid black;}
+
+article:hover {background-color: darkgoldenrod;}
 
 article {
     float: center;
