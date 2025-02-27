@@ -1,5 +1,4 @@
 body {
-    font-family: "Trebuchet MS";
     background-color: black;
     color: white;
     text-align: center;
@@ -15,28 +14,13 @@ body {
 
 * {box-sizing: border-box;}
 
-header, nav, article {background-color: goldenrod;}
+header,article {background-color: goldenrod;}
 
-header, nav {border: 1px solid black;}
-
-nav, article {
-    float: center;
-    text-align: center;
-}
-
-nav:hover, article:hover {background-color: darkgoldenrod;}
-
-ul, p, footer {text-align: left;}
-
-.active {background-color: black;}
-
-nav {
-    width: 11.11%;
-    padding: 5px;
-    font-size: 20px; 
-}
+header {border: 1px solid black;}
 
 article {
+    float: center;
+    text-align: center;
     width: 25%;
     padding: 20px;
     font-size: 25px;
@@ -44,24 +28,8 @@ article {
     margin: 0% 37.5%;
 }
 
-a {
-    text-decoration: none;
-    color: white;
-}
-
-p {
-    font-size: 20px;
-    color: goldenrod;
-}
-
-section::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
 @media(max-width: 900px) {
-    nav, article {
+    article {
         width: 100%;
         height: auto;
     }
