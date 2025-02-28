@@ -18575,8 +18575,6 @@ parcelHelpers.export(exports, "default", ()=>App);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
-var _reactDom = require("react-dom");
-var _reactDomDefault = parcelHelpers.interopDefault(_reactDom);
 var _s = $RefreshSig$();
 function App() {
     _s();
@@ -18589,13 +18587,14 @@ function App() {
         socket.onopen = ()=>{
             console.log('WebSocket connection established');
             socket.send(JSON.stringify({
-                message: "Hello!"
+                MsgType: "test",
+                Message: "Hello!"
             }));
         };
         // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event)=>{
             console.log('Message received: ', event.data);
-            setMessage(JSON.parse(event.data).message);
+            setMessage(JSON.parse(event.data).Message);
         };
         // handle severed connection
         socket.onclose = ()=>{
@@ -18628,7 +18627,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","react-dom":"j6uA9","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"gkKU3":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"gkKU3":[function(require,module,exports,__globalThis) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
