@@ -7,6 +7,8 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
+var leaderboard msgStruct // make leaderboard global
+
 func main() {
 	db, err := connect_db("../data/db.sqlite")
 
@@ -14,6 +16,10 @@ func main() {
 		fmt.Print(err)
 		return
 	}
+	defer db.Close()
+
+	// get leaderboard data from SQL database
+	leaderboard = getLeaderboard(db)
 
 	// test calls
 	add_user("Amoniker", db)

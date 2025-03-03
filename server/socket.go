@@ -52,7 +52,14 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 			log.Println("Error reading message:", err)
 			break
 		}
-		handleWrite(msgType, msgStruct, client.connection)
+
+		if !(ROOMS[client.roomID].inGamestate) {
+			handleWrite(msgType, msgStruct, client.connection) // echo back message
+			handleWrite(1, leaderboard, client.connection)     // write the leaderboard data (1 is the msgType constant for text)
+		} else {
+			handleWrite(msgType, msgStruct, client.connection) // echo back message
+		}
+
 		if ROOMS[client.roomID].isFull { // if there is an opponent
 			if client.playerNum == 0 {
 				handleWrite(msgType, msgStruct, ROOMS[client.roomID].clients[1].connection) // write to opponent
@@ -60,7 +67,6 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 				handleWrite(msgType, msgStruct, ROOMS[client.roomID].clients[0].connection) // write to opponent
 			}
 		}
-
 	}
 }
 
@@ -121,12 +127,13 @@ func handleWrite(msgType int, msgStruct msgStruct, websocket *websocket.Conn) {
 
 // this struct temporarily stores incoming message data before it is validated (if it starts with an uppercase letter it can be exported by Marshal())
 type msgStruct struct {
-	roomId    string // the id of the room to which the client who sent the message belongs
-	playerIdx int    // index of the client in their room (0 or 1)
-	targetIdx int    // index of the target in the client's room (0 to 9)
-	MsgType   string // the type of msg: "client", "target"
-	Position  [2]int // a target or client position
-	Message   string // other messages
+	roomId      string     // the id of the room to which the client who sent the message belongs
+	playerIdx   int        // index of the client in their room (0 or 1)
+	targetIdx   int        // index of the target in the client's room (0 to 9)
+	MsgType     string     // the type of msg: "client", "target"
+	Position    [2]int     // a target or client position
+	Message     string     // other messages
+	Leaderboard []LB_Entry // array of leaderboard entries
 }
 
 // the reflect function flips the given (x, y) coordinates about the middle of the screen

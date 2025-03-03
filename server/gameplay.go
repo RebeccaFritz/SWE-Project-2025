@@ -5,9 +5,10 @@ var ROOMS map[string]Room
 
 // the Room struct contains all the information for one game
 type Room struct {
-	isFull  bool       // Room has two clients
-	clients [2]Client  // clients in the room
-	targets [10]Target // struct containing information for each first target
+	isFull      bool       // Room has two clients
+	inGamestate bool       // is the room in the gamestate
+	clients     [2]Client  // clients in the room
+	targets     [10]Target // struct containing information for each first target
 }
 
 // the Target struct
