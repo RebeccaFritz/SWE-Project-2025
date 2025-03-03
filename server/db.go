@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	_ "github.com/glebarez/go-sqlite"
 )
@@ -45,4 +46,42 @@ func connect_db(path string) (*sql.DB, error) {
 
 	fmt.Println(sqliteVersion)
 	return db, err
+}
+
+// get the leaderboard data from the SQL database
+func getLeaderboard(db *sql.DB) msgStruct {
+	sql := "Select * FROM leaderboard"
+	rows, err := db.Query(sql) // execute the select statement and return a single row
+	if err != nil {
+		log.Println("Error querying table: ", err)
+	}
+	defer rows.Close()
+
+	// query each row and save the data in the lb struct
+	var entries []LB_Entry
+	for rows.Next() {
+		entry := &LB_Entry{}
+		err := rows.Scan(&entry.Username, &entry.Wins)
+		if err != nil {
+			log.Println("Error querying rows: ", err)
+		}
+		entries = append(entries, *entry)
+	}
+
+	// return a msgStruct with all the leaderboard entries
+	return msgStruct{MsgType: "leaderboard", Leaderboard: entries}
+}
+
+// a single leaderboard entry
+type LB_Entry struct {
+	Username string // username of the player
+	Wins     int    // number of wins
+}
+
+// RUN ONCE
+func create_table(db *sql.DB) error {
+	create_table_sql := "CREATE TABLE leaderboard (username TEXT PRIMARY KEY,  wins INTEGER);"
+	_, err := db.Exec(create_table_sql)
+
+	return err
 }
