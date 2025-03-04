@@ -2,6 +2,7 @@ body {
     background-color: black;
     color: white;
     text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #strip {
@@ -27,6 +28,7 @@ article {
     padding: 20px;
     font-size: 25px;
     border: 5px solid black;
+    border-radius: 25px;
     margin: 0% 37.5%;
 }
 

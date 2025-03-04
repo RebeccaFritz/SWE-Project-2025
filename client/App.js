@@ -39,7 +39,7 @@ export default function App() {
         // display the message from the server
         <div id="strip">
             <header>
-                <h1>Welcome to Base Camp 2-10!</h1>
+                <h1>Bit Battle 1.0.0</h1>
             </header>
             <h6>WebSocket Client Received message: {message}</h6>
             <article>Create Game</article>
