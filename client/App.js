@@ -37,6 +37,14 @@ export default function App() {
 
     return (
         // display the message from the server
-        <div>WebSocket Client Received message: {message}</div>
+        <div id="strip">
+            <header>
+                <h1>Bit Battle 1.0.0</h1>
+            </header>
+            <h6>WebSocket Client Received message: {message}</h6>
+            <article>Create Game</article>
+            <article>Join Game</article>
+            <article>Leaderboard</article>
+        </div>
     );
 }
