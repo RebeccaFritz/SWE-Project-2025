@@ -10,19 +10,15 @@ import (
 // function testing getLeaderboard(db *sql.DB) in db.go
 func TestGetLeaderboard(t *testing.T) {
 
-	// open test database
-	db, err := connect_db("../data/test.sqlite") //file:test.db?cache=shared
-	create_table(db)
+	db, err := connect_db("../data/test.sqlite") // open test database
 	if err != nil {
 		fmt.Errorf("could not connect to database: %w", err)
 	}
+	create_table(db) // create leaderboard table in that database
 
-	// deletes all data from test database after the tests are run
+	// deletes the leaderboard table from the test database after the tests are run
 	defer func() {
-		for _, t := range [2]string{"username", "wins"} {
-			_, _ = db.Exec(fmt.Sprintf("DELETE FROM %s", t))
-		}
-
+		db.Exec("DROP TABLE leaderboard")
 		db.Close()
 	}()
 
