@@ -10,26 +10,30 @@ function MenuButton({value}){
 }
 
 // Basic leaderboard table UI
-// How the heck am I supposed to get the db.sqlite data into this???
 function Leaderboard(){
+    let dictionary = {};
+    const parsedData = JSON.parse('[{"Username": "kim", "wins" :0}, {"Username": "harry", "wins" :0}]');
+    function parseLeaderboard(){  
+    }
+    parseLeaderboard();
     return(
         <>
             <nav>
                 <table>
                     <tr>
-                        <th colspan="2">Leaderboard</th>
+                        <th colSpan="2">Leaderboard</th>
                     </tr>
                     <tr>
                         <th>Username</th>
-                        <th width="50%">Wins</th>
+                        <th>Wins</th>
                     </tr>
                     <tr>
-                        <td>Data</td>
-                        <td>Data</td>
+                        <td>{parsedData[0].Username}</td>
+                        <td>{parsedData[0].wins}</td>
                     </tr>
                     <tr>
-                        <td>Data</td>
-                        <td>Data</td>
+                        <td>{parsedData[1].Username}</td>
+                        <td>{parsedData[1].wins}</td>
                     </tr>
                     <tr>
                         <td>Data</td>
