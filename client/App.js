@@ -9,72 +9,69 @@ function MenuButton({value}){
     );
 }
 
-// Basic leaderboard table UI
-function Leaderboard(){
-    let dictionary = {};
-    const parsedData = JSON.parse('[{"Username": "kim", "wins" :0}, {"Username": "harry", "wins" :0}]');
-    function parseLeaderboard(){  
+// Leaderboard UI receiving live message data from WebSocket from App.js
+function Leaderboard({message}){
+    if(message.MsgType === 'leaderboard'){
+        return(
+            <>
+                <nav>
+                    <table>
+                        <tr>
+                            <th colSpan="2">Leaderboard</th>
+                        </tr>
+                        <tr>
+                            <th>Username</th>
+                            <th>Wins</th>
+                        </tr>
+                        <tr>
+                            <td>{message.Leaderboard[0].Username}</td>
+                            <td>{message.Leaderboard[0].Wins}</td>
+                        </tr>
+                        <tr>
+                            <td>{message.Leaderboard[1].Username}</td>
+                            <td>{message.Leaderboard[1].Wins}</td>
+                        </tr>
+                        <tr>
+                            <td>{message.Leaderboard[2].Username}</td>
+                            <td>{message.Leaderboard[2].Wins}</td>
+                        </tr>
+                        <tr>
+                            <td>Null</td>
+                            <td>Null</td>
+                        </tr>
+                        <tr>
+                            <td>Null</td>
+                            <td>Null</td>
+                        </tr>
+                        <tr>
+                            <td>Null</td>
+                            <td>Null</td>
+                        </tr>
+                        <tr>
+                            <td>Null</td>
+                            <td>Null</td>
+                        </tr>
+                        <tr>
+                            <td>Null</td>
+                            <td>Null</td>
+                        </tr>
+                        <tr>
+                            <td>Null</td>
+                            <td>Null</td>
+                        </tr>
+                        <tr>
+                            <td>Null</td>
+                            <td>Null</td>
+                        </tr>
+                    </table>
+                </nav>
+            </>
+        );
     }
-    parseLeaderboard();
-    return(
-        <>
-            <nav>
-                <table>
-                    <tr>
-                        <th colSpan="2">Leaderboard</th>
-                    </tr>
-                    <tr>
-                        <th>Username</th>
-                        <th>Wins</th>
-                    </tr>
-                    <tr>
-                        <td>{parsedData[0].Username}</td>
-                        <td>{parsedData[0].wins}</td>
-                    </tr>
-                    <tr>
-                        <td>{parsedData[1].Username}</td>
-                        <td>{parsedData[1].wins}</td>
-                    </tr>
-                    <tr>
-                        <td>Data</td>
-                        <td>Data</td>
-                    </tr>
-                    <tr>
-                        <td>Data</td>
-                        <td>Data</td>
-                    </tr>
-                    <tr>
-                        <td>Data</td>
-                        <td>Data</td>
-                    </tr>
-                    <tr>
-                        <td>Data</td>
-                        <td>Data</td>
-                    </tr>
-                    <tr>
-                        <td>Data</td>
-                        <td>Data</td>
-                    </tr>
-                    <tr>
-                        <td>Data</td>
-                        <td>Data</td>
-                    </tr>
-                    <tr>
-                        <td>Data</td>
-                        <td>Data</td>
-                    </tr>
-                    <tr>
-                        <td>Data</td>
-                        <td>Data</td>
-                    </tr>
-                </table>
-            </nav>
-        </>
-    );
 }
 
-// make the home screen component
-function HomeScreen(){
+// Home Screen Component
+function HomeScreen({message}){
     return(
         <div id = "strip">
             <header>
@@ -82,7 +79,7 @@ function HomeScreen(){
             </header>
             <br/>
             <section>
-                <Leaderboard />
+                <Leaderboard message = {message}/>
                 <MenuButton value="Start Game"/>
                 <MenuButton value="Join Game"/>
             </section>
@@ -110,7 +107,7 @@ export default function App() {
         // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event) => {
             console.log('Message received: ', event.data);
-            setMessage(JSON.parse(event.data).Message);
+            setMessage(JSON.parse(event.data));
         };
 
         // handle severed connection
@@ -127,6 +124,6 @@ export default function App() {
 
     return (
         // display the client UI
-        <HomeScreen />
+        <HomeScreen message={message}/>
     );
 }
