@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Game from "./Game";
 
 export default function App() {
     const [message, setMessage] = useState('');
@@ -37,6 +38,10 @@ export default function App() {
 
     return (
         // display the message from the server
-        <div>WebSocket Client Received message: {message}</div>
+        <div>
+            <div> WebSocket Client Received message: {message}</div>
+            <Game />
+        </div>
+
     );
 }
