@@ -71,10 +71,6 @@ func getLeaderboard(db *sql.DB) msgStruct {
 	// quicksort algorithm on entries
 	quicksortEntries(entries, 0, len(entries)-1)
 
-	for _, value := range entries {
-		fmt.Println(value)
-	}
-
 	// return a msgStruct with all the leaderboard entries
 	return msgStruct{MsgType: "leaderboard", Leaderboard: entries}
 }
