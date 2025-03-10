@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Game from "./game/Game";
 
 // make the article component
 function MenuButton({value}){
