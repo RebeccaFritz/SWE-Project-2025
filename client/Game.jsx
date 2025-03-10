@@ -8,7 +8,7 @@ import { useEffect } from "react";
  * @param {int} player_width
  * @returns {list}
  */
-function GeneratePositions(n, board_width, player_width) {
+function generatePositions(n, board_width, player_width) {
     let positions = [];
 
     let pos = board_width / (n + 1) - player_width / 2;
@@ -29,7 +29,7 @@ export default function Game() {
         const player = document.querySelector(".player");
         const board = document.querySelector(".board");
 
-        let positions = GeneratePositions(3, 500, 50);
+        let positions = generatePositions(3, 500, 50);
 
         console.log(positions);
 
