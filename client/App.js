@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import ReactDom from 'react-dom'
+import Game from "./game/Game";
 
 export default function App() {
     const [message, setMessage] = useState('');
@@ -13,14 +13,15 @@ export default function App() {
         socket.onopen = () => {
             console.log('WebSocket connection established');
             socket.send(JSON.stringify({
-                message: "Hello!"
+                MsgType: "test",
+                Message: "Hello!"
             }))
         };
 
         // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event) => {
             console.log('Message received: ', event.data);
-            setMessage(JSON.parse(event.data).message);
+            setMessage(JSON.parse(event.data).Message);
         };
 
         // handle severed connection
@@ -37,6 +38,15 @@ export default function App() {
 
     return (
         // display the message from the server
-        <div>WebSocket Client Received message: {message}</div>
+        <div id="strip">
+            <header>
+                <h1>Bit Battle 1.0.0</h1>
+            </header>
+            <article>Create Game</article>
+            <article>Join Game</article>
+            <article>Leaderboard</article>
+            <div> <Game /> </div>
+        </div>
+
     );
 }
