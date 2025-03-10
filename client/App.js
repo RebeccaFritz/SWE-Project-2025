@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Game from "./Game";
+import Game from "./game/Game";
 
 export default function App() {
     const [message, setMessage] = useState('');
