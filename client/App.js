@@ -45,6 +45,8 @@ export default function App() {
             <article>Create Game</article>
             <article>Join Game</article>
             <article>Leaderboard</article>
+            <div> <Game /> </div>
         </div>
+
     );
 }
