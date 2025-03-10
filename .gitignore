@@ -66,6 +66,7 @@ packages/react-devtools-inline/dist
 packages/react-devtools-shell/dist
 packages/react-devtools-timeline/dist
 db.sqlite3
+db.sqlite
 
 .cache/
 .idea/

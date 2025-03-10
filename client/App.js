@@ -477,6 +477,10 @@ export default function App() {
 
     return (
         // display the client UI
-        <HomeScreen message={message}/>
+
+        <div>
+            <HomeScreen message={message} />
+            <Game />
+        </div>
     );
 }
