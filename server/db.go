@@ -68,8 +68,54 @@ func getLeaderboard(db *sql.DB) msgStruct {
 		entries = append(entries, *entry)
 	}
 
+	// quicksort algorithm on entries
+	quicksortEntries(entries, 0, len(entries)-1)
+
 	// return a msgStruct with all the leaderboard entries
 	return msgStruct{MsgType: "leaderboard", Leaderboard: entries}
+}
+
+// the lumuto partition alogithm for quicksortEntries:  keep track of index of smaller elements and keep swapping
+func lumutoPartition(entries []LB_Entry, low int, high int) int {
+	// pick the last element of the array as the pivot for the algorithm
+	pivot := entries[high]
+
+	// i --> pointer that acts as the boundary between smaller and larger elements compared to pivot
+	i := low - 1
+
+	// traverse arry
+	for j := low; j <= high-1; j++ {
+		// if larger element is found expand the boaundary by swapping it with the boundary element
+		if entries[j].Wins > pivot.Wins {
+			i++
+			swap(entries, i, j)
+		}
+	}
+
+	// place the pivot at its correct position
+	swap(entries, i+1, high)
+
+	// return pivot position
+	return i + 1
+
+}
+
+// Swap function
+func swap(arry []LB_Entry, i int, j int) {
+	temp := arry[i]
+	arry[i] = arry[j]
+	arry[j] = temp
+}
+
+// quicksort algorithm for an array of LB_Entry{}
+func quicksortEntries(entries []LB_Entry, low int, high int) {
+	if low < high {
+		// partition return index of pivot
+		pivotIndex := lumutoPartition(entries, low, high)
+
+		quicksortEntries(entries, low, pivotIndex-1)
+		quicksortEntries(entries, pivotIndex+1, high)
+	}
 }
 
 // a single leaderboard entry

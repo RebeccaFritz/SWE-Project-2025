@@ -93,3 +93,5 @@ yarn-debug.log*
 yarn-error.log*
 *.log
 *.min.js
+
+test.sqlite
