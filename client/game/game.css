@@ -15,9 +15,19 @@
 }
 
 .player{
-    background-color: deeppink;
+    background-color: dodgerblue;
     height: 50px;
     width: 50px;
     position: absolute;
     left: 50px;
 }
+
+.a{
+    background-color: red;
+    height: 50px;
+    width: 50px;
+    position: absolute;
+    left: 50px;
+}
+
+
