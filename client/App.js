@@ -5,7 +5,11 @@ import Game from "./game/Game";
 function MenuButton({value}){
     return(
         <article>
-            {value}
+            <form action="/server.go">
+                <label>{value}</label><br />
+                <input type="text" /><br />
+                <input type="submit" value="Submit" />
+            </form>
         </article>
     );
 }
@@ -430,11 +434,12 @@ function HomeScreen({message}){
             <header>
                 <h1>Bit Battle 1.0.0</h1>
             </header>
+
             <br/>
             <section>
                 <Leaderboard message = {message}/>
-                <MenuButton value="Start Game"/>
-                <MenuButton value="Join Game"/>
+                <MenuButton value="Create Room"/>
+                <MenuButton value="Join Room"/>
             </section>
         </div>
     );
@@ -480,7 +485,7 @@ export default function App() {
 
         <div>
             <HomeScreen message={message} />
-            <Game />
+            {/* <Game /> */}
         </div>
     );
 }
