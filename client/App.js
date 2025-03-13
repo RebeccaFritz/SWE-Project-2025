@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Game from "./game/Game";
-import RenderGameState from "./game/RenderGameState";
-import {GameState} from "./game/GameState";
-import {Player} from "./game/GameState";
-
 
 // make the article component
 function MenuButton({value}){
@@ -479,14 +475,12 @@ export default function App() {
         };
     }, []);
 
-    const gs = new GameState(new Player([0,0], 10), new Player([100,100], 10), [])
-
     return (
         // display the client UI
 
         <div>
             <HomeScreen message={message} />
-            <RenderGameState GameState={gs}/>
+            <Game />
         </div>
     );
 }

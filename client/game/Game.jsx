@@ -1,6 +1,5 @@
 import "./game.css";
 import { useEffect } from "react";
-import "./GameState";
 
 /**
  * Generates a set of evenly spaced x values to be used as the possible x values of the player.
@@ -11,14 +10,15 @@ import "./GameState";
  */
 function generatePositions(n, board_width, player_width) {
     let positions = [];
+
     let pos = board_width / (n + 1) - player_width / 2;
 
     for (let i = 1; i <= n; i++) {
         positions.push(pos * i);
     }
+
     return positions;
 }
-
 
 /**
  * Renders a game.
