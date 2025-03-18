@@ -46,6 +46,8 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 	defer closeClient(websocket, client)
 
+	//makeRoom(client, client.roomID) // add client to an empty room
+
 	for {
 		msgType, msgStruct, err := handleRead(websocket)
 		if err != nil {
@@ -53,21 +55,19 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 			break
 		}
 
-		if !(ROOMS[client.roomID].inGamestate) {
-			handleWrite(msgType, msgStruct, client.connection) // echo back message
-			handleWrite(1, leaderboard, client.connection)     // write the leaderboard data (1 is the msgType constant for text)
-		} else {
-			handleWrite(msgType, msgStruct, client.connection) // echo back message
-		}
-
-		if ROOMS[client.roomID].isFull { // if there is an opponent
-			if client.playerNum == 0 {
-				handleWrite(msgType, msgStruct, ROOMS[client.roomID].clients[1].connection) // write to opponent
-			} else {
-				handleWrite(msgType, msgStruct, ROOMS[client.roomID].clients[0].connection) // write to opponent
-			}
-		}
+		handleWrite(msgType, msgStruct, client.connection) // echo back message
+		handleWrite(1, leaderboard, client.connection)     // write the leaderboard data (1 is the msgType constant for text)
 	}
+}
+
+// add a client to a room
+func makeRoom(client Client, roomID string) {
+	room := Room{
+		isFull:      false,
+		inGamestate: false,
+	}
+	room.clients[0] = client
+	ROOMS[roomID] = room
 }
 
 // handleRead reads an incoming JSON message from a client and parses it

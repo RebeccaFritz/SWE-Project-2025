@@ -117,25 +117,19 @@ func createTestData(db *sql.DB) {
 
 // function testing wsHandler(writer http.ResponseWriter, request *http.Request) in socket.go
 func TestWebSocketConnection(t *testing.T) {
-	// creat a mock server
+	// create a mock server
 	server := httptest.NewServer(http.HandlerFunc(wsHandler))
 	defer server.Close()
 
 	// create a mock client
 	url1 := "ws" + strings.TrimPrefix(server.URL, "http")
-	ws, _, err := websocket.DefaultDialer.Dial(url1, nil)
+	clientOne, _, err := websocket.DefaultDialer.Dial(url1, nil)
 	if err != nil {
 		t.Fatalf("FAILED to dail websocket: %v", err)
 	}
-	defer ws.Close()
+	defer clientOne.Close()
 
-	// create a new client structure with this websocket connection
-	clientOne := Client{
-		connection: ws,
-		roomID:     "mockRoom",
-		playerNum:  0,
-	}
-
+	// create a test message to send to the server
 	testMsgStruct := msgStruct{
 		MsgType: "test",
 		Message: "this is a test",
@@ -146,19 +140,20 @@ func TestWebSocketConnection(t *testing.T) {
 		t.Fatalf("Error Marshaling message: %v", err)
 	}
 
-	// Test message exchange
+	// send a message to the server using client.WriteMessage()
 	expectedMessage := message
-	if err := clientOne.connection.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
-		t.Fatalf("FAILED to send message: %v", err)
+	if err := clientOne.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
+		t.Fatalf("Client 1 FAILED to send message to server: %v", err)
 	}
 
-	_, messageOne, err := clientOne.connection.ReadMessage()
+	// read the server's response using client.ReadMessage()
+	_, messageOne, err := clientOne.ReadMessage()
 	if err != nil {
 		t.Fatalf("FAILED to read message from Client 1: %v", err)
 	}
 
+	// test the server response
 	if string(messageOne) != string(expectedMessage) {
-		t.Fatalf("Client 1 Expected %s but got %s", expectedMessage, string(messageOne))
+		t.Fatalf("Expected %s but got %s", expectedMessage, string(messageOne))
 	}
-
 }
