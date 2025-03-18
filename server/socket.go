@@ -46,8 +46,6 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 	defer closeClient(websocket, client)
 
-	//makeRoom(client, client.roomID) // add client to an empty room
-
 	for {
 		msgType, msgStruct, err := handleRead(websocket)
 		if err != nil {
@@ -58,16 +56,6 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 		handleWrite(msgType, msgStruct, client.connection) // echo back message
 		handleWrite(1, leaderboard, client.connection)     // write the leaderboard data (1 is the msgType constant for text)
 	}
-}
-
-// add a client to a room
-func makeRoom(client Client, roomID string) {
-	room := Room{
-		isFull:      false,
-		inGamestate: false,
-	}
-	room.clients[0] = client
-	ROOMS[roomID] = room
 }
 
 // handleRead reads an incoming JSON message from a client and parses it
