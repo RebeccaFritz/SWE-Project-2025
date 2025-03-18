@@ -2,8 +2,14 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
+
+	"github.com/gorilla/websocket"
 )
 
 // see https://www.digitalocean.com/community/tutorials/how-to-write-unit-tests-in-go-using-go-test-and-the-testing-package
@@ -107,4 +113,52 @@ func createTestData(db *sql.DB) {
 	for i := 0; i < 16; i++ {
 		increment_wins("wilford", db)
 	}
+}
+
+// function testing wsHandler(writer http.ResponseWriter, request *http.Request) in socket.go
+func TestWebSocketConnection(t *testing.T) {
+	// creat a mock server
+	server := httptest.NewServer(http.HandlerFunc(wsHandler))
+	defer server.Close()
+
+	// create a mock client
+	url1 := "ws" + strings.TrimPrefix(server.URL, "http")
+	ws, _, err := websocket.DefaultDialer.Dial(url1, nil)
+	if err != nil {
+		t.Fatalf("FAILED to dail websocket: %v", err)
+	}
+	defer ws.Close()
+
+	// create a new client structure with this websocket connection
+	clientOne := Client{
+		connection: ws,
+		roomID:     "mockRoom",
+		playerNum:  0,
+	}
+
+	testMsgStruct := msgStruct{
+		MsgType: "test",
+		Message: "this is a test",
+	}
+
+	message, err := json.Marshal(testMsgStruct)
+	if err != nil {
+		t.Fatalf("Error Marshaling message: %v", err)
+	}
+
+	// Test message exchange
+	expectedMessage := message
+	if err := clientOne.connection.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
+		t.Fatalf("FAILED to send message: %v", err)
+	}
+
+	_, messageOne, err := clientOne.connection.ReadMessage()
+	if err != nil {
+		t.Fatalf("FAILED to read message from Client 1: %v", err)
+	}
+
+	if string(messageOne) != string(expectedMessage) {
+		t.Fatalf("Client 1 Expected %s but got %s", expectedMessage, string(messageOne))
+	}
+
 }

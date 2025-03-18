@@ -106,6 +106,8 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 			target.position0 = msgStruct.Position
 			target.position1 = reflect(msgStruct.Position)
 		}
+	case "test":
+		// do nothing
 	default:
 		log.Println("Error: unknown message type")
 	}
