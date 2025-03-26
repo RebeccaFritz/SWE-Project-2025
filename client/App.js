@@ -11,9 +11,9 @@ function MenuButton({value}){
 }
 
 // Leaderboard UI receiving live message data from WebSocket from App.js
-function Leaderboard({message}){
-    if(message.MsgType === 'leaderboard'){
-        if(message.Leaderboard[9]){
+function Leaderboard({leaderboard}){
+    if(leaderboard != null){
+        if(leaderboard[9]){
             return(
                 <>
                     <nav>
@@ -26,51 +26,51 @@ function Leaderboard({message}){
                                 <th>Wins</th>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[0].Username}</td>
-                                <td>{message.Leaderboard[0].Wins}</td>
+                                <td>{leaderboard[0].Username}</td>
+                                <td>{leaderboard[0].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[1].Username}</td>
-                                <td>{message.Leaderboard[1].Wins}</td>
+                                <td>{leaderboard[1].Username}</td>
+                                <td>{leaderboard[1].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[2].Username}</td>
-                                <td>{message.Leaderboard[2].Wins}</td>
+                                <td>{leaderboard[2].Username}</td>
+                                <td>{leaderboard[2].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[3].Username}</td>
-                                <td>{message.Leaderboard[3].Wins}</td>
+                                <td>{leaderboard[3].Username}</td>
+                                <td>{leaderboard[3].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[4].Username}</td>
-                                <td>{message.Leaderboard[4].Wins}</td>
+                                <td>{leaderboard[4].Username}</td>
+                                <td>{leaderboard[4].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[5].Username}</td>
-                                <td>{message.Leaderboard[5].Wins}</td>
+                                <td>{leaderboard[5].Username}</td>
+                                <td>{leaderboard[5].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[6].Username}</td>
-                                <td>{message.Leaderboard[6].Wins}</td>
+                                <td>{leaderboard[6].Username}</td>
+                                <td>{leaderboard[6].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[7].Username}</td>
-                                <td>{message.Leaderboard[7].Wins}</td>
+                                <td>{leaderboard[7].Username}</td>
+                                <td>{leaderboard[7].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[8].Username}</td>
-                                <td>{message.Leaderboard[8].Wins}</td>
+                                <td>{leaderboard[8].Username}</td>
+                                <td>{leaderboard[8].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[9].Username}</td>
-                                <td>{message.Leaderboard[9].Wins}</td>
+                                <td>{leaderboard[9].Username}</td>
+                                <td>{leaderboard[9].Wins}</td>
                             </tr>
                         </table>
                     </nav>
                 </>
             );
         }
-        else if(message.Leaderboard[8]){
+        else if(leaderboard[8]){
             return(
                 <>
                     <nav>
@@ -83,47 +83,47 @@ function Leaderboard({message}){
                                 <th>Wins</th>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[0].Username}</td>
-                                <td>{message.Leaderboard[0].Wins}</td>
+                                <td>{leaderboard[0].Username}</td>
+                                <td>{leaderboard[0].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[1].Username}</td>
-                                <td>{message.Leaderboard[1].Wins}</td>
+                                <td>{leaderboard[1].Username}</td>
+                                <td>{leaderboard[1].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[2].Username}</td>
-                                <td>{message.Leaderboard[2].Wins}</td>
+                                <td>{leaderboard[2].Username}</td>
+                                <td>{leaderboard[2].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[3].Username}</td>
-                                <td>{message.Leaderboard[3].Wins}</td>
+                                <td>{leaderboard[3].Username}</td>
+                                <td>{leaderboard[3].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[4].Username}</td>
-                                <td>{message.Leaderboard[4].Wins}</td>
+                                <td>{leaderboard[4].Username}</td>
+                                <td>{leaderboard[4].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[5].Username}</td>
-                                <td>{message.Leaderboard[5].Wins}</td>
+                                <td>{leaderboard[5].Username}</td>
+                                <td>{leaderboard[5].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[6].Username}</td>
-                                <td>{message.Leaderboard[6].Wins}</td>
+                                <td>{leaderboard[6].Username}</td>
+                                <td>{leaderboard[6].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[7].Username}</td>
-                                <td>{message.Leaderboard[7].Wins}</td>
+                                <td>{leaderboard[7].Username}</td>
+                                <td>{leaderboard[7].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[8].Username}</td>
-                                <td>{message.Leaderboard[8].Wins}</td>
+                                <td>{leaderboard[8].Username}</td>
+                                <td>{leaderboard[8].Wins}</td>
                             </tr>
                         </table>
                     </nav>
                 </>
             );
         }
-        else if(message.Leaderboard[7]){
+        else if(leaderboard[7]){
             return(
                 <>
                     <nav>
@@ -136,43 +136,43 @@ function Leaderboard({message}){
                                 <th>Wins</th>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[0].Username}</td>
-                                <td>{message.Leaderboard[0].Wins}</td>
+                                <td>{leaderboard[0].Username}</td>
+                                <td>{leaderboard[0].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[1].Username}</td>
-                                <td>{message.Leaderboard[1].Wins}</td>
+                                <td>{leaderboard[1].Username}</td>
+                                <td>{leaderboard[1].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[2].Username}</td>
-                                <td>{message.Leaderboard[2].Wins}</td>
+                                <td>{leaderboard[2].Username}</td>
+                                <td>{leaderboard[2].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[3].Username}</td>
-                                <td>{message.Leaderboard[3].Wins}</td>
+                                <td>{leaderboard[3].Username}</td>
+                                <td>{leaderboard[3].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[4].Username}</td>
-                                <td>{message.Leaderboard[4].Wins}</td>
+                                <td>{leaderboard[4].Username}</td>
+                                <td>{leaderboard[4].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[5].Username}</td>
-                                <td>{message.Leaderboard[5].Wins}</td>
+                                <td>{leaderboard[5].Username}</td>
+                                <td>{leaderboard[5].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[6].Username}</td>
-                                <td>{message.Leaderboard[6].Wins}</td>
+                                <td>{leaderboard[6].Username}</td>
+                                <td>{leaderboard[6].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[7].Username}</td>
-                                <td>{message.Leaderboard[7].Wins}</td>
+                                <td>{leaderboard[7].Username}</td>
+                                <td>{leaderboard[7].Wins}</td>
                             </tr>
                         </table>
                     </nav>
                 </>
             );
         }
-        else if(message.Leaderboard[6]){
+        else if(leaderboard[6]){
             return(
                 <>
                     <nav>
@@ -185,39 +185,39 @@ function Leaderboard({message}){
                                 <th>Wins</th>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[0].Username}</td>
-                                <td>{message.Leaderboard[0].Wins}</td>
+                                <td>{leaderboard[0].Username}</td>
+                                <td>{leaderboard[0].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[1].Username}</td>
-                                <td>{message.Leaderboard[1].Wins}</td>
+                                <td>{leaderboard[1].Username}</td>
+                                <td>{leaderboard[1].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[2].Username}</td>
-                                <td>{message.Leaderboard[2].Wins}</td>
+                                <td>{leaderboard[2].Username}</td>
+                                <td>{leaderboard[2].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[3].Username}</td>
-                                <td>{message.Leaderboard[3].Wins}</td>
+                                <td>{leaderboard[3].Username}</td>
+                                <td>{leaderboard[3].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[4].Username}</td>
-                                <td>{message.Leaderboard[4].Wins}</td>
+                                <td>{leaderboard[4].Username}</td>
+                                <td>{leaderboard[4].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[5].Username}</td>
-                                <td>{message.Leaderboard[5].Wins}</td>
+                                <td>{leaderboard[5].Username}</td>
+                                <td>{leaderboard[5].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[6].Username}</td>
-                                <td>{message.Leaderboard[6].Wins}</td>
+                                <td>{leaderboard[6].Username}</td>
+                                <td>{leaderboard[6].Wins}</td>
                             </tr>
                         </table>
                     </nav>
                 </>
             );
         }
-        else if(message.Leaderboard[5]){
+        else if(leaderboard[5]){
             return(
                 <>
                     <nav>
@@ -230,35 +230,35 @@ function Leaderboard({message}){
                                 <th>Wins</th>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[0].Username}</td>
-                                <td>{message.Leaderboard[0].Wins}</td>
+                                <td>{leaderboard[0].Username}</td>
+                                <td>{leaderboard[0].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[1].Username}</td>
-                                <td>{message.Leaderboard[1].Wins}</td>
+                                <td>{leaderboard[1].Username}</td>
+                                <td>{leaderboard[1].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[2].Username}</td>
-                                <td>{message.Leaderboard[2].Wins}</td>
+                                <td>{leaderboard[2].Username}</td>
+                                <td>{leaderboard[2].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[3].Username}</td>
-                                <td>{message.Leaderboard[3].Wins}</td>
+                                <td>{leaderboard[3].Username}</td>
+                                <td>{leaderboard[3].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[4].Username}</td>
-                                <td>{message.Leaderboard[4].Wins}</td>
+                                <td>{leaderboard[4].Username}</td>
+                                <td>{leaderboard[4].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[5].Username}</td>
-                                <td>{message.Leaderboard[5].Wins}</td>
+                                <td>{leaderboard[5].Username}</td>
+                                <td>{leaderboard[5].Wins}</td>
                             </tr>
                         </table>
                     </nav>
                 </>
             );
         }
-        else if(message.Leaderboard[4]){
+        else if(leaderboard[4]){
             return(
                 <>
                     <nav>
@@ -271,31 +271,31 @@ function Leaderboard({message}){
                                 <th>Wins</th>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[0].Username}</td>
-                                <td>{message.Leaderboard[0].Wins}</td>
+                                <td>{leaderboard[0].Username}</td>
+                                <td>{leaderboard[0].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[1].Username}</td>
-                                <td>{message.Leaderboard[1].Wins}</td>
+                                <td>{leaderboard[1].Username}</td>
+                                <td>{leaderboard[1].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[2].Username}</td>
-                                <td>{message.Leaderboard[2].Wins}</td>
+                                <td>{leaderboard[2].Username}</td>
+                                <td>{leaderboard[2].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[3].Username}</td>
-                                <td>{message.Leaderboard[3].Wins}</td>
+                                <td>{leaderboard[3].Username}</td>
+                                <td>{leaderboard[3].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[4].Username}</td>
-                                <td>{message.Leaderboard[4].Wins}</td>
+                                <td>{leaderboard[4].Username}</td>
+                                <td>{leaderboard[4].Wins}</td>
                             </tr>
                         </table>
                     </nav>
                 </>
             );
         }
-        else if(message.Leaderboard[3]){
+        else if(leaderboard[3]){
             return(
                 <>
                     <nav>
@@ -308,27 +308,27 @@ function Leaderboard({message}){
                                 <th>Wins</th>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[0].Username}</td>
-                                <td>{message.Leaderboard[0].Wins}</td>
+                                <td>{leaderboard[0].Username}</td>
+                                <td>{leaderboard[0].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[1].Username}</td>
-                                <td>{message.Leaderboard[1].Wins}</td>
+                                <td>{leaderboard[1].Username}</td>
+                                <td>{leaderboard[1].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[2].Username}</td>
-                                <td>{message.Leaderboard[2].Wins}</td>
+                                <td>{leaderboard[2].Username}</td>
+                                <td>{leaderboard[2].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[3].Username}</td>
-                                <td>{message.Leaderboard[3].Wins}</td>
+                                <td>{leaderboard[3].Username}</td>
+                                <td>{leaderboard[3].Wins}</td>
                             </tr>
                         </table>
                     </nav>
                 </>
             );
         }
-        else if(message.Leaderboard[2]){
+        else if(leaderboard[2]){
             return(
                 <>
                     <nav>
@@ -341,23 +341,23 @@ function Leaderboard({message}){
                                 <th>Wins</th>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[0].Username}</td>
-                                <td>{message.Leaderboard[0].Wins}</td>
+                                <td>{leaderboard[0].Username}</td>
+                                <td>{leaderboard[0].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[1].Username}</td>
-                                <td>{message.Leaderboard[1].Wins}</td>
+                                <td>{leaderboard[1].Username}</td>
+                                <td>{leaderboard[1].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[2].Username}</td>
-                                <td>{message.Leaderboard[2].Wins}</td>
+                                <td>{leaderboard[2].Username}</td>
+                                <td>{leaderboard[2].Wins}</td>
                             </tr>
                         </table>
                     </nav>
                 </>
             );
         }
-        else if(message.Leaderboard[1]){
+        else if(leaderboard[1]){
             return(
                 <>
                     <nav>
@@ -370,19 +370,19 @@ function Leaderboard({message}){
                                 <th>Wins</th>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[0].Username}</td>
-                                <td>{message.Leaderboard[0].Wins}</td>
+                                <td>{leaderboard[0].Username}</td>
+                                <td>{leaderboard[0].Wins}</td>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[1].Username}</td>
-                                <td>{message.Leaderboard[1].Wins}</td>
+                                <td>{leaderboard[1].Username}</td>
+                                <td>{leaderboard[1].Wins}</td>
                             </tr>
                         </table>
                     </nav>
                 </>
             );
         }
-        else if(message.Leaderboard[0]){
+        else if(leaderboard[0]){
             return(
                 <>
                     <nav>
@@ -395,8 +395,8 @@ function Leaderboard({message}){
                                 <th>Wins</th>
                             </tr>
                             <tr>
-                                <td>{message.Leaderboard[0].Username}</td>
-                                <td>{message.Leaderboard[0].Wins}</td>
+                                <td>{leaderboard[0].Username}</td>
+                                <td>{leaderboard[0].Wins}</td>
                             </tr>
                         </table>
                     </nav>
@@ -424,7 +424,7 @@ function Leaderboard({message}){
 }
 
 // Home Screen Component
-function HomeScreen({message}){
+function HomeScreen({leaderboard}){
     return(
         <div id = "strip">
             <header>
@@ -432,7 +432,7 @@ function HomeScreen({message}){
             </header>
             <br/>
             <section>
-                <Leaderboard message = {message}/>
+                <Leaderboard leaderboard={leaderboard}/>
                 <MenuButton value="Start Game"/>
                 <MenuButton value="Join Game"/>
             </section>
@@ -442,6 +442,7 @@ function HomeScreen({message}){
 
 export default function App() {
     const [message, setMessage] = useState('');
+    const [leaderboard, setLeaderboard] = useState(null);
     const [ws, setWS] = useState(null);
 
     useEffect(() => {
@@ -460,7 +461,20 @@ export default function App() {
         // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event) => {
             console.log('Message received: ', event.data);
-            setMessage(JSON.parse(event.data));
+
+            serverMessage = JSON.parse(event.data);
+            msgType = serverMessage.MsgType;
+
+            switch (msgType) {
+                case "test":
+                    return;
+                case "leaderboard":
+                    setLeaderboard(serverMessage.Leaderboard);
+                    return;
+                default:
+                    setMessage(serverMessage);
+                    return;
+            }
         };
 
         // handle severed connection
@@ -479,7 +493,7 @@ export default function App() {
         // display the client UI
 
         <div>
-            <HomeScreen message={message} />
+            <HomeScreen leaderboard={leaderboard} />
             <Game />
         </div>
     );
