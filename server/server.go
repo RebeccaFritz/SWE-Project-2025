@@ -24,10 +24,10 @@ func main() {
 	leaderboard = getLeaderboard(db)
 
 	// test calls
-	// add_user("Amoniker", db)
-	// add_user("kim", db)
-	// add_user("harry", db)
-	// increment_wins("Amoniker", db)
+	add_user("Amoniker", db)
+	add_user("kim", db)
+	add_user("harry", db)
+	increment_wins("Amoniker", db)
 
 	http.HandleFunc("/ws", wsHandler)
 	fmt.Println("WebSocket server started on :8080")
