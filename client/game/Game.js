@@ -30,10 +30,9 @@ let targetList;
 
 
 export default class Game extends React.Component{
-    constructor(props, gameState) {
+    constructor(props) {
         super(props)
         this.myRef = React.createRef()
-        this.gameState = gameState;
     }
 
     Sketch = (p) => {
