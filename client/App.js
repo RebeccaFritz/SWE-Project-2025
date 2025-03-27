@@ -29,12 +29,24 @@ export default function App() {
 
             switch (msgType) {
                 case "test":
+                    socket.send(JSON.stringify({
+                        MsgType: "client",
+                        Message: "We are live!"
+                    }))
                     return;
                 case "leaderboard":
                     setLeaderboard(serverMessage.Leaderboard);
+                    socket.send(JSON.stringify({
+                        MsgType: "client",
+                        Message: "Leaderboard updated!"
+                    }))
                     return;
                 default:
                     setMessage(serverMessage);
+                    socket.send(JSON.stringify({
+                        MsgType: "client",
+                        Message: "Carry on"
+                    }))
                     return;
             }
         };
