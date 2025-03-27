@@ -30,9 +30,10 @@ let targetList;
 
 
 export default class Game extends React.Component{
-    constructor(props) {
+    constructor(props, gameState) {
         super(props)
         this.myRef = React.createRef()
+        this.gameState = gameState;
     }
 
     Sketch = (p) => {
@@ -44,7 +45,13 @@ export default class Game extends React.Component{
         }
 
         p.draw = () => {
+
             p.background(220);
+
+            if(this.gameState == 1){
+               p.circle(30, 40, 100);
+            }
+
 
             p.fill(0, 0 , 255);
             p.circle(Player1.x, Player1.y, PLAYER_WIDTH);
@@ -106,7 +113,6 @@ export default class Game extends React.Component{
 
             return queue;
         }
-
 
         function initializeTargets(step){
             let targets = [];

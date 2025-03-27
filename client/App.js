@@ -481,7 +481,10 @@ export default function App() {
 
         <div>
             <HomeScreen message={message} />
-            <Game />
+            <div className='game'>
+               <Game />
+            </div>
+
         </div>
     );
 }
