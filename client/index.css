@@ -5,6 +5,14 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.game {
+   position: absolute;
+
+   top: 400;
+   left: 500;
+
+}
+
 #strip {
     position: absolute;
     top: 0;
@@ -31,7 +39,7 @@ article {
     border: 1px solid black;
     color: #fff;
     border-radius: 25px;
-    margin: 0% 1.5%; 
+    margin: 0% 1.5%;
 }
 
 nav {
