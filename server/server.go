@@ -29,7 +29,6 @@ func main() {
 	// get leaderboard data from SQL database
 	leaderboard = getLeaderboard(db)
 
-
 	http.HandleFunc("/ws", wsHandler)
 	fmt.Println("WebSocket server started on :8080")
 	http.ListenAndServe(":8080", nil)

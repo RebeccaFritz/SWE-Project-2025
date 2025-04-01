@@ -68,14 +68,12 @@ func getLeaderboard(db *sql.DB) msgStruct {
 		entries = append(entries, *entry)
 	}
 
-
 	// quicksort algorithm on entries
 	quicksortEntries(entries, 0, len(entries)-1)
 
 	// return a msgStruct with all the leaderboard entries
 	return msgStruct{MsgType: "leaderboard", Leaderboard: entries}
 }
-
 
 // the lumuto partition alogithm for quicksortEntries:  keep track of index of smaller elements and keep swapping
 func lumutoPartition(entries []LB_Entry, low int, high int) int {

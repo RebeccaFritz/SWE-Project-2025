@@ -68,7 +68,6 @@ packages/react-devtools-timeline/dist
 db.sqlite3
 db.sqlite
 
-
 .cache/
 .idea/
 .nyc_output/
@@ -94,5 +93,5 @@ yarn-debug.log*
 yarn-error.log*
 *.log
 *.min.js
-test.sqlite
 
+test.sqlite

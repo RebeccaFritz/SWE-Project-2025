@@ -47,7 +47,6 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 	defer closeClient(websocket, client)
 
-
 	handleWrite(1, leaderboard, client.connection) // write the leaderboard data (1 is the msgType constant for text)
 	handleMessaging(websocket, client)
 }
@@ -57,7 +56,6 @@ func handleMessaging(websocket *websocket.Conn, client Client) {
 	for tick := range time.Tick(5 * time.Second) {
 		// the read waits until a message is recieved
 		msgType, message, err := handleRead(websocket)
-
 		if err != nil {
 			log.Println("Error reading message:", err)
 			break
@@ -133,7 +131,6 @@ type msgStruct struct {
 	Position    [2]int     // a target or client position
 	Message     string     // other messages
 	CurTick     time.Time  // integer messages
-
 	Leaderboard []LB_Entry // array of leaderboard entries
 }
 

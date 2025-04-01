@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Game from "./game/Game";
-
 import HomeScreen from './homescreen';
-
 
 export default function App() {
     const [message, setMessage] = useState('');
@@ -26,7 +24,6 @@ export default function App() {
         socket.onmessage = (event) => {
             console.log('Message received: ', event.data);
 
-
             serverMessage = JSON.parse(event.data);
             msgType = serverMessage.MsgType;
 
@@ -40,7 +37,6 @@ export default function App() {
                     setMessage(serverMessage);
                     return;
             }
-
         };
 
         // handle severed connection
@@ -62,6 +58,5 @@ export default function App() {
             <HomeScreen leaderboard={leaderboard} />
             <Game />
         </div>
-
     );
 }
