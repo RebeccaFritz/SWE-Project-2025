@@ -60,9 +60,7 @@ export default function App() {
 
         <div>
             <HomeScreen leaderboard={leaderboard} />
-            <div className="game" >
-               <Game  />
-            </div>
+            <Game />
         </div>
 
     );
