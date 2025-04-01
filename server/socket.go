@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -57,7 +56,7 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 // a function that sends a message to a single client
 func handleMessaging(websocket *websocket.Conn, client Client) {
-	for tick := range time.Tick(time.Microsecond) { // can also try Milliseconds
+	for tick := range time.Tick(time.Second / 1000) {
 		// the read waits until a message is recieved
 		msgType, message, err := handleRead(websocket)
 		if err != nil {
@@ -87,7 +86,7 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	if err != nil {
 		return msgType, msgStruct{}, err
 	}
-	fmt.Printf("Received: %s\\n", message)
+	// fmt.Printf("Received: %s\\n", message)
 
 	// decode JSON data with Unmarshal function and store it in a temporary structure
 	var newMsgStruct msgStruct
