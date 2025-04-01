@@ -13,6 +13,9 @@ import (
 // define a global array for the all the lobby codes
 var LOBBY map[string]Client
 
+// define a global array for all the clients (identified by ther websocket connections)
+var CLIENTS = make(map[*websocket.Conn]Client)
+
 // the client struct
 type Client struct {
 	score      int
@@ -49,8 +52,9 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 	defer closeClient(websocket, client)
 
+	CLIENTS[client.connection] = client // add client to CLIENTS map
+
 	handleWrite(1, leaderboard, client.connection) // write the leaderboard data (1 is the msgType constant for text)
-	writeClientData(client)                        // write the preliminary client data
 	handleMessaging(websocket, client)
 }
 
@@ -68,16 +72,6 @@ func handleMessaging(websocket *websocket.Conn, client Client) {
 
 		handleWrite(msgType, message, client.connection) // echo back message
 	}
-}
-
-// a function that writes the client data to the client
-func writeClientData(client Client) {
-	messageOut := msgStruct{
-		MsgType:    "client data",
-		ClientData: client,
-	}
-
-	handleWrite(1, messageOut, client.connection)
 }
 
 // handleRead reads an incoming JSON message from a client and parses it
@@ -118,7 +112,7 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 		}
 	case "create lobby code":
 		newLobbyCode := newMsgStruct.lobbyCode
-		client := newMsgStruct.ClientData
+		client := CLIENTS[websocket]
 		LOBBY[newLobbyCode] = client
 	case "lobby code":
 		handleLobbyMessage(newMsgStruct, websocket)
@@ -152,7 +146,6 @@ type msgStruct struct {
 	CurTick     time.Time  // integer messages
 	Leaderboard []LB_Entry // array of leaderboard entries
 	lobbyCode   string     // for lobby code creation or connection
-	ClientData  Client     // client structure
 }
 
 // the reflect function flips the given (x, y) coordinates about the middle of the screen
@@ -181,7 +174,7 @@ func handleLobbyMessage(message msgStruct, websocket *websocket.Conn) {
 			curRoom := ROOMS[roomID]
 			// place the clients in the room
 			curRoom.clients[0] = value
-			curRoom.clients[1] = message.ClientData
+			curRoom.clients[1] = CLIENTS[websocket]
 			// assign player1 and player2
 			curRoom.clients[0].playerNum = 1
 			curRoom.clients[1].playerNum = 2
@@ -192,9 +185,6 @@ func handleLobbyMessage(message msgStruct, websocket *websocket.Conn) {
 			curRoom.clients[1].health = 5
 			curRoom.clients[0].roomID = roomID
 			curRoom.clients[1].roomID = roomID
-			// send updated client data to each client
-			writeClientData(curRoom.clients[0])
-			writeClientData(curRoom.clients[1])
 		}
 	}
 
