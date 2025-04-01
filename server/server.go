@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	_ "github.com/glebarez/go-sqlite"
 )
@@ -29,6 +30,7 @@ func main() {
 	// get leaderboard data from SQL database
 	leaderboard = getLeaderboard(db)
 
+	os.Create("../server/server-messages.txt") // create a file to recieve incoming messages to the server
 	http.HandleFunc("/ws", wsHandler)
 	fmt.Println("WebSocket server started on :8080")
 	http.ListenAndServe(":8080", nil)
