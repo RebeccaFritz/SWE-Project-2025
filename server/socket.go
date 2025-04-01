@@ -82,7 +82,6 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	if err != nil {
 		return msgType, msgStruct{}, err
 	}
-	// fmt.Printf("Received: %s\\n", message)
 	// write the recieved message to a file
 	file, err := os.OpenFile("../server/server-messages.txt", os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
