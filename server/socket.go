@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -46,27 +47,25 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 	defer closeClient(websocket, client)
 
-	for {
-		msgType, msgStruct, err := handleRead(websocket)
+
+	handleWrite(1, leaderboard, client.connection) // write the leaderboard data (1 is the msgType constant for text)
+	handleMessaging(websocket, client)
+}
+
+// a function that sends a message to a single client
+func handleMessaging(websocket *websocket.Conn, client Client) {
+	for tick := range time.Tick(5 * time.Second) {
+		// the read waits until a message is recieved
+		msgType, message, err := handleRead(websocket)
+
 		if err != nil {
 			log.Println("Error reading message:", err)
 			break
 		}
 
-		if !(ROOMS[client.roomID].inGamestate) {
-			handleWrite(msgType, msgStruct, client.connection) // echo back message
-			handleWrite(1, leaderboard, client.connection)     // write the leaderboard data (1 is the msgType constant for text)
-		} else {
-			handleWrite(msgType, msgStruct, client.connection) // echo back message
-		}
+		message.CurTick = tick
 
-		if ROOMS[client.roomID].isFull { // if there is an opponent
-			if client.playerNum == 0 {
-				handleWrite(msgType, msgStruct, ROOMS[client.roomID].clients[1].connection) // write to opponent
-			} else {
-				handleWrite(msgType, msgStruct, ROOMS[client.roomID].clients[0].connection) // write to opponent
-			}
-		}
+		handleWrite(msgType, message, client.connection) // echo back message
 	}
 }
 
@@ -133,6 +132,8 @@ type msgStruct struct {
 	MsgType     string     // the type of msg: "client", "target"
 	Position    [2]int     // a target or client position
 	Message     string     // other messages
+	CurTick     time.Time  // integer messages
+
 	Leaderboard []LB_Entry // array of leaderboard entries
 }
 

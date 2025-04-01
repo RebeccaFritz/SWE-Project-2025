@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import Game from "./game/Game";
 
+import HomeScreen from './homescreen';
+
+
 export default function App() {
     const [message, setMessage] = useState('');
+    const [leaderboard, setLeaderboard] = useState(null);
     const [ws, setWS] = useState(null);
 
     useEffect(() => {
@@ -21,7 +25,22 @@ export default function App() {
         // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event) => {
             console.log('Message received: ', event.data);
-            setMessage(JSON.parse(event.data).Message);
+
+
+            serverMessage = JSON.parse(event.data);
+            msgType = serverMessage.MsgType;
+
+            switch (msgType) {
+                case "test":
+                    return;
+                case "leaderboard":
+                    setLeaderboard(serverMessage.Leaderboard);
+                    return;
+                default:
+                    setMessage(serverMessage);
+                    return;
+            }
+
         };
 
         // handle severed connection
@@ -37,15 +56,13 @@ export default function App() {
     }, []);
 
     return (
-        // display the message from the server
-        <div id="strip">
-            <header>
-                <h1>Bit Battle 1.0.0</h1>
-            </header>
-            <article>Create Game</article>
-            <article>Join Game</article>
-            <article>Leaderboard</article>
-            <div> <Game /> </div>
+        // display the client UI
+
+        <div>
+            <HomeScreen leaderboard={leaderboard} />
+            <div className="game" >
+               <Game  />
+            </div>
         </div>
 
     );
