@@ -87,11 +87,13 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	if err != nil {
 		log.Println(err)
 	}
-	newLine := "Received: " + string(message) + " on " + time.Now().String()
-	_, err = fmt.Fprintln(file, newLine)
-	if err != nil {
-		log.Println(err)
-	}
+	clientName := "Client, Local Address: " + websocket.LocalAddr().String() + ", Remote Address: " + websocket.RemoteAddr().String()
+	date := "Date: " + time.Now().String()
+	received := "Received: " + string(message)
+	space := " "
+	fullMessage := clientName + "\n" + date + "\n" + received + "\n" + space
+
+	writeToFile(file, fullMessage)
 
 	// decode JSON data with Unmarshal function and store it in a temporary structure
 	var newMsgStruct msgStruct
@@ -132,6 +134,14 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	}
 
 	return msgType, newMsgStruct, nil
+}
+
+// function to write a message to a file
+func writeToFile(file *os.File, message string) {
+	_, err := fmt.Fprintln(file, message)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 // handleWrite writes a message to a client
