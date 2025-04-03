@@ -1,10 +1,33 @@
 // make the article component
 function MenuButton({value}){
+    sendCode();
     return(
         <article>
             {value}
+            <form name="Lobby">
+                <input type="text"/><br/>
+                <button>Submit Code</button>
+            </form>
         </article>
     );
+}
+
+function sendCode(){
+    if(MenuButton.value === "Start Game"){
+        socket.send(JSON.stringify({
+            MsgType: "create lobby code",
+            lobbyCode: ($("#Lobby").serializeArray()),
+            ClientData: Client
+        }))
+        return;
+    }
+    else if(MenuButton.value === "Join Game"){
+        socket.send(JSON.stringify({
+            MsgType: "lobby code",
+            lobbyCode: ($("#Lobby").serializeArray()),
+            ClientData: Client
+        }))
+    }
 }
 
 function leaderboardEntry(username, wins) {
