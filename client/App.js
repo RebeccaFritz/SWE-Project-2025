@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Game from "./game/Game";
-import HomeScreen from './homescreen';
+import HomeScreen from './homescreen'; 
 
 export default function App() {
     const [message, setMessage] = useState('');
@@ -29,12 +29,24 @@ export default function App() {
 
             switch (msgType) {
                 case "test":
+                    socket.send(JSON.stringify({
+                        MsgType: "client",
+                        Message: "We are live!"
+                    }))
                     return;
                 case "leaderboard":
                     setLeaderboard(serverMessage.Leaderboard);
+                    socket.send(JSON.stringify({
+                        MsgType: "client",
+                        Message: "Leaderboard updated!"
+                    }))
                     return;
                 default:
                     setMessage(serverMessage);
+                    socket.send(JSON.stringify({
+                        MsgType: "client",
+                        Message: "Carry on"
+                    }))
                     return;
             }
         };
@@ -56,9 +68,7 @@ export default function App() {
 
         <div>
             <HomeScreen leaderboard={leaderboard} />
-            <div className="game" >
-               <Game  />
-            </div>
+            <Game />
         </div>
     );
 }

@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -41,8 +40,7 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 	// create a new client structure with this websocket connection
 	client := Client{
 		connection: websocket,
-		roomID:     uuid.NewString(), // generate unique string to id the room (will be updated if client joins another room)
-		playerNum:  0,                // set to player 0 (will be updated if client joins another room)
+		playerNum:  0, // set to player 0 (will be updated if client joins another room)
 	}
 
 	defer closeClient(websocket, client)
@@ -53,7 +51,7 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 // a function that sends a message to a single client
 func handleMessaging(websocket *websocket.Conn, client Client) {
-	for tick := range time.Tick(5 * time.Second) {
+	for tick := range time.Tick(time.Second / 1000) {
 		// the read waits until a message is recieved
 		msgType, message, err := handleRead(websocket)
 		if err != nil {
@@ -73,7 +71,7 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	if err != nil {
 		return msgType, msgStruct{}, err
 	}
-	fmt.Printf("Received: %s\\n", message)
+	fmt.Printf("Received: %s\n", message)
 
 	// decode JSON data with Unmarshal function and store it in a temporary structure
 	var msgStruct msgStruct
@@ -142,8 +140,10 @@ func reflect(position [2]int) [2]int {
 }
 
 func closeClient(websocket *websocket.Conn, client Client) {
-	curRoom := ROOMS[client.roomID]
-	// remove client from Room by setting it to an uninitialized Client struct
-	curRoom.clients[client.playerNum] = Client{}
+	if client.roomID != "" {
+		curRoom := ROOMS[client.roomID]
+		// remove client from Room by setting it to an uninitialized Client struct
+		curRoom.clients[client.playerNum] = Client{}
+	}
 	websocket.Close()
 }
