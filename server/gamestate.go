@@ -30,5 +30,5 @@ type Projectile struct {
 	diameter int;
 	velocity int;
 	isEnabled bool;
-	forceMultiplier int;
+	forceMultiplier float64;
 }
