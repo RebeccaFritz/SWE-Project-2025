@@ -7,8 +7,7 @@ import(
 CONSTANTS THAT DEFINE ALL GAME STATES *USE THEM CAREFULLY*
 */
 
-// this is the number of targets structures, not the current number of enabled targets.
-const NUM_TARGETS int = 3
+
 const CANVAS_WIDTH = 400;
 const CANVAS_HEIGHT = 400;
 const PLAYER_MOVE_LENGTH = 50;
