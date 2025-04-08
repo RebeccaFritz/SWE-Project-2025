@@ -29,6 +29,9 @@ func main() {
 	// get leaderboard data from SQL database
 	leaderboard = getLeaderboard(db)
 
+	// this spins up a game loop. it is blocking.
+	runGameLoop()
+
 	http.HandleFunc("/ws", wsHandler)
 	fmt.Println("WebSocket server started on :8080")
 	http.ListenAndServe(":8080", nil)
