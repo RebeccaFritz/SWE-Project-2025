@@ -3,6 +3,9 @@ function MenuButton({value}){
     return(
         <article>
             {value}
+            <input type="text"/>
+            <br></br>
+            <input type="submit" value="Submit code"/>
         </article>
     );
 }

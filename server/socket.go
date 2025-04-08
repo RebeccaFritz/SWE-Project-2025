@@ -53,7 +53,7 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 // a function that sends a message to a single client
 func handleMessaging(websocket *websocket.Conn, client Client) {
-	for tick := range time.Tick(5 * time.Second) {
+	for tick := range time.Tick(time.Second / 1000) {
 		// the read waits until a message is recieved
 		msgType, message, err := handleRead(websocket)
 		if err != nil {
