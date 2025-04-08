@@ -17,7 +17,9 @@ type Room struct {
 	clients     [2]Client  // clients in the room
 }
 
-func runGameLoop(){
+// runGameLoop is the entrypoint for a game session.
+// printDebug controls whether the gamestate is printed to the screen
+func runGameLoop(printDebug bool){
 	gamestate := initGameState()
 
 	for range time.Tick(TICK_DURATION){
@@ -25,22 +27,25 @@ func runGameLoop(){
 		input_queue := []string{"move_left"} // for testing
 		gamestate = updateGameState(gamestate, input_queue)
 		// writeGameState() // player 2 needs to be flipped on read and write
+
+		if(printDebug){
+			log.Println("Gamestate")
+			fmt.Printf("Projectiles: %+v\n", gamestate.projectiles)
+			fmt.Printf("Targets: %+v\n", gamestate.targets)
+			fmt.Printf("Player 1: %+v\n", gamestate.player1)
+			fmt.Printf("Player 2: %+v\n\n", gamestate.player2)
+		}
 	}
 }
 
-// updateGameState adjusts the gamestate based on velocities and given player input
-func updateGameState(gs Gamestate, input_queue []string)(Gamestate){
-	gs = copyGameState(gs)
-
-	gs.player1, gs.player2 = applyPlayerInputs(gs.player1, gs.player2, input_queue)
-	updateProjectilePositions(gs.projectiles)
-	updateTargetsPositions(gs.targets)
-	handleProjectileTargetCollisions(gs.projectiles, gs.targets)
-
-	fmt.Printf("Projectiles: %+v\n", gs.projectiles)
-	fmt.Printf("Targets: %+v\n", gs.targets)
-	fmt.Printf("Player 1: %+v\n", gs.player1)
-	fmt.Printf("Player 2: %+v\n\n", gs.player2)
+// initGameState initializes a gamestate struct
+func initGameState()(Gamestate){
+	gs := Gamestate {
+		player1: initPlayer(1),
+		player2: initPlayer(2),
+		targets: initTargets(),
+		projectiles: initProjectiles(),
+	}
 
 	return gs
 }
@@ -63,6 +68,23 @@ func initProjectiles()([]Projectile){
 	p2 := Projectile{300, 300, 10, 0, true, 0.5}
 	projectiles := []Projectile{p1, p2}
 	return projectiles
+}
+
+// updateGameState adjusts the gamestate based on velocities and given player input
+func updateGameState(gs Gamestate, input_queue []string)(Gamestate){
+	gs = copyGameState(gs)
+
+	gs.player1, gs.player2 = applyPlayerInputs(gs.player1, gs.player2, input_queue)
+	updateProjectilePositions(gs.projectiles)
+	updateTargetsPositions(gs.targets)
+	handleProjectileTargetCollisions(gs.projectiles, gs.targets)
+
+	return gs
+}
+
+// copyGameState returns a deep copy of the given game state
+func copyGameState(gs Gamestate)(Gamestate){
+	return gs
 }
 
 // applyPlayerInput adjusts the
@@ -94,23 +116,6 @@ func updatePlayerPosition(p Player, direction string)(Player){
 	}
 
 	return p
-}
-
-// copyGameState returns a deep copy of the given game state
-func copyGameState(gs Gamestate)(Gamestate){
-	return gs
-}
-
-// initGameState initializes a game state struct
-func initGameState()(Gamestate){
-	gs := Gamestate {
-		player1: initPlayer(1),
-		player2: initPlayer(2),
-		targets: initTargets(),
-		projectiles: initProjectiles(),
-	}
-
-	return gs
 }
 
 // updateTargetsPositions updates the positions of the targets, according to their velocity.
