@@ -46,7 +46,7 @@ func handleProjectileTargetCollisions(projectiles []Projectile, targets []Target
          }
 
          if(isColliding(targets[i], projectiles[j])){
-            targets[i].velocity += projectiles[j].velocity * projectiles[j].forceMultiplier
+         	targets[i].velocity += int(float64(projectiles[j].velocity) * projectiles[j].forceMultiplier)
             projectiles[j].isEnabled = false
             projectiles[j].velocity = 0
          }
