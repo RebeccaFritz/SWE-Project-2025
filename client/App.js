@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Game from "./game/Game";
-import HomeScreen from './homescreen';
+import HomeScreen from './homescreen'; 
 
 export default function App() {
     const [message, setMessage] = useState('');
@@ -68,9 +68,7 @@ export default function App() {
 
         <div>
             <HomeScreen leaderboard={leaderboard} />
-            <div className="game" >
-               <Game  />
-            </div>
+            <Game />
         </div>
     );
 }
