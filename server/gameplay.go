@@ -39,7 +39,6 @@ func updateGameState(gs Gamestate, input_queue []string)(Gamestate){
 
 	fmt.Printf("Projectiles: %+v\n", gs.projectiles)
 	fmt.Printf("Targets: %+v\n", gs.targets)
-	gs.targets[0].velocity = 10
 	fmt.Printf("Player 1: %+v\n", gs.player1)
 	fmt.Printf("Player 2: %+v\n\n", gs.player2)
 
