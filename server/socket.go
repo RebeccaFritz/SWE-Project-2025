@@ -111,7 +111,6 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 }
 
 // handleWrite writes a message to a client
-// msgType indicates the actual type of the msg (1 for JSON, for example)
 func handleWrite(msgType int, msgStruct msgStruct, websocket *websocket.Conn) {
 	message, err := json.Marshal(msgStruct)
 	if err != nil {
