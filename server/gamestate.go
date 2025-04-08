@@ -1,12 +1,19 @@
 package main
 
+/*
+CONSTANTS THAT DEFINE ALL GAME STATES *USE THEM CAREFULLY*
+*/
+
+// this is the number of targets structures, not the current number of enabled targets.
+const NUM_TARGETS int = 3
+const CANVAS_WIDTH = 400;
+const CANVAS_HEIGHT = 400;
+
 type Gamestate struct {
 	player1 Player;
 	player2 Player;
-	targets []Target;
+	targets [3]Target;
 	projectiles []Projectile;
-	canvasWidth int;
-	canvasHeight int;
 }
 
 type Player struct {
