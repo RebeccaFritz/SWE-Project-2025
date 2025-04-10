@@ -7,20 +7,15 @@ function MenuButton({value}){
             {value}
             <form name="Lobby">
                 <input type="text"/><br/>
+                <button type="button" onClick={buttonClick}>{value}</button>
             </form>
-            <Button value={value}/>
         </article>
     );
 }
 
-function Button({value}){
-    function handleClick(){
-        sendCode();
-        console.log("Lobby code sent");
-    }
-    return(
-        <button onClick={handleClick}>{value}</button>
-    );
+function buttonClick(){
+    sendCode();
+    console.log("Lobby code sent");
 }
 
 function sendCode(){
@@ -59,14 +54,16 @@ function Leaderboard({leaderboard}){
             <>
                 <nav>
                     <table>
-                        <tr>
-                            <th colSpan="2">Leaderboard</th>
-                        </tr>
-                        <tr>
-                            <th>Username</th>
-                            <th>Wins</th>
-                        </tr>
-                        {entries}
+                        <tbody>
+                            <tr>
+                                <th colSpan="2">Leaderboard</th>
+                            </tr>
+                            <tr>
+                                <th>Username</th>
+                                <th>Wins</th>
+                            </tr>
+                            {entries}        
+                        </tbody>
                     </table>
                 </nav>
             </>

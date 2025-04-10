@@ -22,10 +22,10 @@ export default function App() {
 
         // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event) => {
-            console.log('Message received: ', event.data);
+            //console.log('Message received: ', event.data);
 
-            serverMessage = JSON.parse(event.data);
-            msgType = serverMessage.MsgType;
+            var serverMessage = JSON.parse(event.data);
+            var msgType = serverMessage.MsgType;
 
             switch (msgType) {
                 case "test":
@@ -68,7 +68,6 @@ export default function App() {
 
         <div>
             <HomeScreen leaderboard={leaderboard} />
-            <Game />
         </div>
     );
 }
