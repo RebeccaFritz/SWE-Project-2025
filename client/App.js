@@ -5,7 +5,7 @@ import HomeScreen from './homescreen';
 export default function App() {
     const [message, setMessage] = useState('');
     const [leaderboard, setLeaderboard] = useState(null);
-    const [gamestate, setGamestate] = useState(null);
+    var [gameState, setGamestate] = useState(null);
     const [ws, setWS] = useState(null);
 
     useEffect(() => {
@@ -77,7 +77,9 @@ export default function App() {
 
         <div>
             <HomeScreen leaderboard={leaderboard} />
-            <Game />
+            <div className="game" >
+               <Game gameState={gameState}/>
+            </div>
         </div>
     );
 }

@@ -44,12 +44,12 @@ export default class Game extends React.Component{
         }
 
         p.draw = () => {
-
+           if (this.props.gameState == null) return;
             p.background(220);
 
-            if(this.gameState == 1){
-               p.circle(30, 40, 100);
-            }
+            console.log(this.props.gameState.Player1.X)
+            p.fill(0, 0 , 255);
+            p.circle(this.props.gameState.Player1.Y, this.props.gameState.Player1.Y, 100);
 
 
             p.fill(0, 0 , 255);
