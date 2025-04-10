@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import Game from "./game/Game";
-import HomeScreen from './homescreen'; 
+import Homescreen from './homescreen'; 
 
 export default function App() {
     const [message, setMessage] = useState('');
-    const [leaderboard, setLeaderboard] = useState(null);
+    const [leaderboard, setLeaderboard] = useState([]);
     const [ws, setWS] = useState(null);
 
     useEffect(() => {
         // create WebSocket at the server port
         const socket = new WebSocket('ws://localhost:8080/ws');
+        setWS(socket);
 
         // open WebSocket
         socket.onopen = () => {
@@ -22,7 +23,7 @@ export default function App() {
 
         // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event) => {
-            //console.log('Message received: ', event.data);
+            console.log('Message received: ', event.data);
 
             var serverMessage = JSON.parse(event.data);
             var msgType = serverMessage.MsgType;
@@ -67,7 +68,7 @@ export default function App() {
         // display the client UI
 
         <div>
-            <HomeScreen leaderboard={leaderboard} />
+            <Homescreen socket={ws} leaderboard={leaderboard} />
         </div>
     );
 }

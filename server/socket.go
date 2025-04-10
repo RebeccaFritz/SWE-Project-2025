@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -92,34 +93,36 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	var curRoom = ROOMS[newMsgStruct.RoomId]
 
 	switch newMsgStruct.MsgType {
-		case "client":
-			var client = curRoom.clients[newMsgStruct.PlayerNum]
-			if newMsgStruct.PlayerNum == 0 { // update client position
-				client.position1 = newMsgStruct.Position
-				client.position2 = reflect(newMsgStruct.Position)
-			} else {
-				client.position1 = reflect(newMsgStruct.Position)
-				client.position2 = newMsgStruct.Position
-			}
-		case "target":
-			var target = curRoom.targets[newMsgStruct.TargetIdx]
-			if newMsgStruct.PlayerNum == 0 { // update target position
-				target.position0 = reflect(newMsgStruct.Position)
-				target.position1 = newMsgStruct.Position
-			} else {
-				target.position0 = newMsgStruct.Position
-				target.position1 = reflect(newMsgStruct.Position)
-			}
-		case "create lobby code":
-			newLobbyCode := newMsgStruct.lobbyCode
-			client := CLIENTS[websocket]
-			LOBBY[newLobbyCode] = client
-		case "lobby code":
-			handleLobbyMessage(newMsgStruct, websocket)
-		case "test":
-			log.Println("msg: ", newMsgStruct.Message)
-		default:
-			log.Printf("Error: unknown message type '%s'", newMsgStruct.MsgType)
+	case "client":
+		var client = curRoom.clients[newMsgStruct.PlayerNum]
+		if newMsgStruct.PlayerNum == 0 { // update client position
+			client.position1 = newMsgStruct.Position
+			client.position2 = reflect(newMsgStruct.Position)
+		} else {
+			client.position1 = reflect(newMsgStruct.Position)
+			client.position2 = newMsgStruct.Position
+		}
+	case "target":
+		var target = curRoom.targets[newMsgStruct.TargetIdx]
+		if newMsgStruct.PlayerNum == 0 { // update target position
+			target.position0 = reflect(newMsgStruct.Position)
+			target.position1 = newMsgStruct.Position
+		} else {
+			target.position0 = newMsgStruct.Position
+			target.position1 = reflect(newMsgStruct.Position)
+		}
+	case "create lobby code":
+		fmt.Printf("Received: %s\\n", message)
+		newLobbyCode := newMsgStruct.lobbyCode
+		client := CLIENTS[websocket]
+		LOBBY[newLobbyCode] = client
+	case "lobby code":
+		fmt.Printf("Received: %s\\n", message)
+		handleLobbyMessage(newMsgStruct, websocket)
+	case "test":
+		log.Println("msg: ", newMsgStruct.Message)
+	default:
+		log.Printf("Error: unknown message type '%s'", newMsgStruct.MsgType)
 	}
 
 	return msgType, newMsgStruct, nil

@@ -1,35 +1,40 @@
 import React from "react";
 
+var lobbyData = '';
+var socket = null;
+
 // make the article component
 function MenuButton({value}){
+    function buttonClick(){
+        sendCode(value);
+        console.log("Lobby code sent");
+    }
+    function submitLobby(formData) {
+        lobbyData = formData.get("menuButton");
+    }
     return(
         <article>
             {value}
-            <form name="Lobby">
-                <input type="text"/><br/>
+            <form name="Lobby" action="submitLobby">
+                <input type="text" name="menuButton"/><br/>
                 <button type="button" onClick={buttonClick}>{value}</button>
             </form>
         </article>
     );
 }
 
-function buttonClick(){
-    sendCode();
-    console.log("Lobby code sent");
-}
-
-function sendCode(){
-    if(MenuButton.value === "Start Game"){
+function sendCode(value){
+    if(value === "Start Game"){
         socket.send(JSON.stringify({
             MsgType: "create lobby code",
-            lobbyCode: ($("#Lobby").serializeArray()),
+            lobbyCode: lobbyData,
         }))
         return;
     }
-    else if(MenuButton.value === "Join Game"){
+    else if(value === "Join Game"){
         socket.send(JSON.stringify({
             MsgType: "lobby code",
-            lobbyCode: ($("#Lobby").serializeArray()),
+            lobbyCode: lobbyData,
         }))
     }
 }
@@ -72,7 +77,7 @@ function Leaderboard({leaderboard}){
 }
 
 // Home Screen Component
-export default function HomeScreen({leaderboard}){
+function renderHomescreen({leaderboard}){
     return(
         <div id = "strip">
             <header>
@@ -87,3 +92,22 @@ export default function HomeScreen({leaderboard}){
         </div>
     );
 }
+
+const Homescreen = (props) => {
+    socket = props.socket
+    return(
+        <div id = "strip">
+            <header>
+                <h1>Bit Battle 1.0.0</h1>
+            </header>
+            <br/>
+            <section>
+                <Leaderboard leaderboard={props.leaderboard}/>
+                <MenuButton value="Start Game"/>
+                <MenuButton value="Join Game"/>
+            </section>
+        </div>
+    );
+}
+
+export default Homescreen;
