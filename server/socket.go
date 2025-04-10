@@ -45,6 +45,7 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 	defer closeClient(websocket, client)
 
+	go runGameLoop(false, client, client)
 	handleWrite(1, leaderboard, client.connection) // write the leaderboard data (1 is the msgType constant for text)
 	handleMessaging(websocket, client)
 }
@@ -121,6 +122,7 @@ type msgStruct struct {
 	Message     string     // other messages
 	CurTick     time.Time  // integer messages
 	Leaderboard []LB_Entry // array of leaderboard entries
+	Gamestate Gamestate
 }
 
 // the reflect function flips the given (x, y) coordinates about the middle of the screen
