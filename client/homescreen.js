@@ -1,14 +1,25 @@
+import React from "react";
+
 // make the article component
 function MenuButton({value}){
-    sendCode();
     return(
         <article>
             {value}
             <form name="Lobby">
                 <input type="text"/><br/>
-                <button>Submit Code</button>
             </form>
+            <Button value={value}/>
         </article>
+    );
+}
+
+function Button({value}){
+    function handleClick(){
+        sendCode();
+        console.log("Lobby code sent");
+    }
+    return(
+        <button onClick={handleClick}>{value}</button>
     );
 }
 
@@ -17,7 +28,6 @@ function sendCode(){
         socket.send(JSON.stringify({
             MsgType: "create lobby code",
             lobbyCode: ($("#Lobby").serializeArray()),
-            ClientData: Client
         }))
         return;
     }
@@ -25,7 +35,6 @@ function sendCode(){
         socket.send(JSON.stringify({
             MsgType: "lobby code",
             lobbyCode: ($("#Lobby").serializeArray()),
-            ClientData: Client
         }))
     }
 }
