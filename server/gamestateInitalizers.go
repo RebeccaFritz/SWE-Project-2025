@@ -3,10 +3,10 @@ package main
 // initGameState initializes a gamestate struct
 func initGameState()(Gamestate){
 	gs := Gamestate {
-		player1: initPlayer(1),
-		player2: initPlayer(2),
-		targets: initTargets(),
-		projectiles: initProjectiles(),
+		Player1: initPlayer(1),
+		Player2: initPlayer(2),
+		Targets: initTargets(),
+		Projectiles: initProjectiles(),
 	}
 
 	return gs
@@ -14,7 +14,7 @@ func initGameState()(Gamestate){
 
 // initPlayer creates a blank player
 func initPlayer(idx int)(Player){
-	return Player { x: 0, y: 0, diameter: 0, velocity: 0, idx: idx}
+	return Player { X: 0, Y: 0, Diameter: 0, Velocity: 0, Idx: idx}
 }
 
 // initTargets creates the targets
