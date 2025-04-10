@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Game from "./game/Game";
-import HomeScreen from './homescreen'; 
+import HomeScreen from './homescreen';
 
 export default function App() {
     const [message, setMessage] = useState('');
     const [leaderboard, setLeaderboard] = useState(null);
+    const [gamestate, setGamestate] = useState(null);
     const [ws, setWS] = useState(null);
 
     useEffect(() => {
@@ -22,12 +23,20 @@ export default function App() {
 
         // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event) => {
-            console.log('Message received: ', event.data);
+            //console.log('Message received: ', event.data);
 
             serverMessage = JSON.parse(event.data);
             msgType = serverMessage.MsgType;
 
             switch (msgType) {
+               case "gamestate":
+                  console.log(serverMessage.Gamestate)
+                  setGamestate(serverMessage.Gamestate)
+                  // socket.send(JSON.stringify({
+                  //     MsgType: "pong",
+                  //     Message: "recieved gamestate!"
+                  // }))
+                  return;
                 case "test":
                     socket.send(JSON.stringify({
                         MsgType: "client",
@@ -43,11 +52,11 @@ export default function App() {
                     return;
                 default:
                     setMessage(serverMessage);
-                    socket.send(JSON.stringify({
-                        MsgType: "client",
-                        Message: "Carry on"
-                    }))
-                    return;
+                    // socket.send(JSON.stringify({
+                    //     MsgType: "client",
+                    //     Message: "Carry on"
+                    // }))
+                    // return;
             }
         };
 
