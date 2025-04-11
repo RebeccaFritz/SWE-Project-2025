@@ -12,7 +12,7 @@ import (
 )
 
 // define a global array for the all the lobby codes
-var LOBBY map[string]Client
+var LOBBY = make(map[string]Client)
 
 // define a global array for all the clients (identified by ther websocket connections)
 var CLIENTS = make(map[*websocket.Conn]Client)
