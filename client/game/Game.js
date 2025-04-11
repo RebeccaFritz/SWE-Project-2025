@@ -47,7 +47,7 @@ export default class Game extends React.Component{
            if (this.props.gameState == null) return;
             p.background(220);
 
-            console.log(this.props.gameState.Player1.X)
+            console.log("recieved", this.props.gameState)
             p.fill(0, 0 , 255);
             p.circle(this.props.gameState.Player1.Y, this.props.gameState.Player1.Y, 100);
 
