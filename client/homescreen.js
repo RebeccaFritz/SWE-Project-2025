@@ -7,15 +7,14 @@ var socket = null;
 function MenuButton({value}){
     function buttonClick(){
         sendCode(value);
-        console.log("Lobby code sent");
     }
-    function submitLobby(formData) {
-        lobbyData = formData.get("menuButton");
+    function buttonInput(event) {
+        lobbyData = event.target.value;
     }
     return(
         <article>
             {value}
-            <form name="Lobby" action="submitLobby">
+            <form name="Lobby" onChange={buttonInput}>
                 <input type="text" name="menuButton"/><br/>
                 <button type="button" onClick={buttonClick}>{value}</button>
             </form>
@@ -29,7 +28,6 @@ function sendCode(value){
             MsgType: "create lobby code",
             lobbyCode: lobbyData,
         }))
-        return;
     }
     else if(value === "Join Game"){
         socket.send(JSON.stringify({
@@ -37,6 +35,7 @@ function sendCode(value){
             lobbyCode: lobbyData,
         }))
     }
+    console.log("Lobby code sent");
 }
 
 function leaderboardEntry(username, wins) {
