@@ -23,7 +23,7 @@ export default function App() {
 
         // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event) => {
-            console.log('Message received: ', event.data);
+            //console.log('Message received: ', event.data);
 
             var serverMessage = JSON.parse(event.data);
             var msgType = serverMessage.MsgType;
@@ -42,6 +42,10 @@ export default function App() {
                         Message: "Leaderboard updated!"
                     }))
                     return;
+                case "matched lobby code":
+                    console.log('Message received: ', event.data);
+                case "bad lobby code":
+                    console.log('Message received: ', event.data);
                 default:
                     setMessage(serverMessage);
                     socket.send(JSON.stringify({
