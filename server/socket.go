@@ -18,7 +18,7 @@ var LOBBY = make(map[string]Client)
 var CLIENTS = make(map[*websocket.Conn]Client)
 
 // define an empty Client struct for refrence purposes
-var zeroValCleint Client
+var zeroValClient Client
 
 // the client struct
 type Client struct {
@@ -121,10 +121,11 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, msgStruct, error) {
 	case "create lobby code":
 		fmt.Printf("Received: %s\n", message)
 		client := CLIENTS[websocket]
-		LOBBY[incomingMsg.lobbyCode] = client
+		LOBBY[incomingMsg.LobbyCode] = client
 	case "lobby code":
 		fmt.Printf("Received: %s\n", message)
-		outboundMsg = handleLobbyMessage(incomingMsg, websocket)
+		fmt.Println(incomingMsg.LobbyCode)
+		outboundMsg = handleLobbyMessage(incomingMsg.LobbyCode, websocket)
 	case "test":
 		log.Println("msg: ", incomingMsg.Message)
 	default:
@@ -156,7 +157,7 @@ type msgStruct struct {
 	Message     string     // other messages
 	CurTick     time.Time  // integer messages
 	Leaderboard []LB_Entry // array of leaderboard entries
-	lobbyCode   string     // for lobby code creation or connection
+	LobbyCode   string     // for lobby code creation or connection
 }
 
 // the reflect function flips the given (x, y) coordinates about the middle of the screen
@@ -177,13 +178,12 @@ func closeClient(websocket *websocket.Conn, client Client) {
 // it (1) checks to see if the provided lobby code is correct,
 // (2a) if correct it places both the provided client and the client with the matching code in a new room
 // (2b) if wrong it send the client back an error message
-func handleLobbyMessage(message msgStruct, wsConnection *websocket.Conn) msgStruct {
-	fmt.Printf("matching lobby codes ... ")
+func handleLobbyMessage(LobbyCode string, wsConnection *websocket.Conn) msgStruct {
 
 	var outboundMsg msgStruct
-	value := LOBBY[message.lobbyCode]
+	value := LOBBY[LobbyCode]
 
-	if value == zeroValCleint {
+	if value != zeroValClient {
 		roomID := uuid.NewString() // generate unique string to id the room
 		curRoom := ROOMS[roomID]
 		// place the clients in the room

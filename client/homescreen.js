@@ -26,19 +26,19 @@ function sendCode(value){
     if(value === "Start Game"){
         socket.send(JSON.stringify({
             MsgType: "create lobby code",
-            lobbyCode: lobbyData,
+            LobbyCode: lobbyData,
         }))
     }
     else if(value === "Join Game"){
         socket.send(JSON.stringify({
             MsgType: "lobby code",
-            lobbyCode: lobbyData,
+            LobbyCode: lobbyData,
         }))
     }
     console.log("Lobby code sent");
 }
 
-function leaderboardEntry(username, wins) {
+function leaderboardEntry(username, wins, i) {
     return (
         <tr>
             <td>{username}</td>
@@ -52,7 +52,7 @@ function Leaderboard({leaderboard}){
     if(leaderboard != null){
         const entries = []; // leaderboard entries
         for(let i = 0; i < leaderboard.length && i < 10; i++) {
-            entries.push(leaderboardEntry(leaderboard[i].Username, leaderboard[i].Wins));
+            entries.push(leaderboardEntry(leaderboard[i].Username, leaderboard[i].Wins, i));
         }
         return(
             <>
