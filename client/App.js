@@ -42,9 +42,7 @@ export default function App() {
                         Message: "Leaderboard updated!"
                     }))
                     return;
-                case "matched lobby code":
-                    console.log('Message received: ', event.data);
-                case "bad lobby code":
+                case "validate lobby code":
                     console.log('Message received: ', event.data);
                 default:
                     setMessage(serverMessage);

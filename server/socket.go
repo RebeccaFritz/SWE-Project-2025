@@ -66,7 +66,7 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 func handleMessaging(wsConnection *websocket.Conn) {
 	for tick := range time.Tick(time.Second / 1000) {
 		// the read waits until a message is recieved
-		msgType, message, outboundMsg, err := handleRead(wsConnection)
+		msgType, message, err := handleRead(wsConnection)
 		if err != nil {
 			log.Println("Error reading message:", err)
 			break
@@ -74,18 +74,15 @@ func handleMessaging(wsConnection *websocket.Conn) {
 
 		message.CurTick = tick
 
-		if outboundMsg.Message != "" {
-			handleWrite(1, outboundMsg, wsConnection)
-		}
 		handleWrite(msgType, message, wsConnection) // echo back message
 	}
 }
 
 // handleRead reads an incoming JSON message from a client and parses it
-func handleRead(websocket *websocket.Conn) (int, msgStruct, msgStruct, error) {
+func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	msgType, message, err := websocket.ReadMessage()
 	if err != nil {
-		return msgType, msgStruct{}, msgStruct{}, err
+		return msgType, msgStruct{}, err
 	}
 	// fmt.Printf("Received: %s\n", message)
 
@@ -97,7 +94,6 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, msgStruct, error) {
 	}
 
 	var curRoom = ROOMS[incomingMsg.RoomId]
-	var outboundMsg msgStruct // initilize outbound message struct
 
 	switch incomingMsg.MsgType {
 	case "client":
@@ -124,15 +120,14 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, msgStruct, error) {
 		LOBBY[incomingMsg.LobbyCode] = client
 	case "lobby code":
 		fmt.Printf("Received: %s\n", message)
-		fmt.Println(incomingMsg.LobbyCode)
-		outboundMsg = handleLobbyMessage(incomingMsg.LobbyCode, websocket)
+		handleLobbyMessage(incomingMsg.LobbyCode, websocket)
 	case "test":
 		log.Println("msg: ", incomingMsg.Message)
 	default:
 		log.Printf("Error: unknown message type '%s'", incomingMsg.MsgType)
 	}
 
-	return msgType, incomingMsg, outboundMsg, nil
+	return msgType, incomingMsg, nil
 }
 
 // handleWrite writes a message to a client
@@ -178,9 +173,8 @@ func closeClient(websocket *websocket.Conn, client Client) {
 // it (1) checks to see if the provided lobby code is correct,
 // (2a) if correct it places both the provided client and the client with the matching code in a new room
 // (2b) if wrong it send the client back an error message
-func handleLobbyMessage(LobbyCode string, wsConnection *websocket.Conn) msgStruct {
+func handleLobbyMessage(LobbyCode string, wsConnection *websocket.Conn) {
 
-	var outboundMsg msgStruct
 	value := LOBBY[LobbyCode]
 
 	if value != zeroValClient {
@@ -200,17 +194,18 @@ func handleLobbyMessage(LobbyCode string, wsConnection *websocket.Conn) msgStruc
 		curRoom.clients[0].roomID = roomID
 		curRoom.clients[1].roomID = roomID
 
-		outboundMsg = msgStruct{
-			MsgType: "matched lobby code",
-			Message: "The provided lobby code has been sucessfully matched",
+		goodMsg := msgStruct{
+			MsgType: "validate lobby code",
+			Message: "Your lobby code has sucessfully matched",
 		}
+		handleWrite(1, goodMsg, wsConnection)
+		handleWrite(1, goodMsg, value.connection) // write confirmation to opponent
 	} else {
-		outboundMsg = msgStruct{
-			MsgType: "bad lobby code",
+		badMsg := msgStruct{
+			MsgType: "validate lobby code",
 			Message: "The provided lobby code does not match any of the existing codes",
 		}
+		handleWrite(1, badMsg, wsConnection)
 	}
-
-	return outboundMsg
 
 }
