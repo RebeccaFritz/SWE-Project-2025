@@ -4,29 +4,29 @@ import { GameState, Projectile } from "./gameState.js";
 import { Player } from "./gameState.js";
 import { Target } from "./gameState.js";
 
-
-const CANVAS_WIDTH = 400;
-const CANVAS_HEIGHT = 400;
-
-const P1_START_X = CANVAS_WIDTH*0.5;
-const P2_START_X = CANVAS_WIDTH*0.5;
-const P1_START_Y =  CANVAS_HEIGHT*0.9;
-const P2_START_Y =  CANVAS_HEIGHT*0.1;
-const PLAYER_WIDTH = 25;
-const PLAYER_SPEED = 50;
-
 const TARGET_DIAMETER = 20;
-
 const PROJECTILE_DIAMETER = 10;
-const PROJECTILE_DIAMETER_FORCE_MULT = 0.04;
-
-let MyGameState = new GameState(new Player, new Player, [], []);
-
-let Player1 = new Player(P1_START_X, P1_START_Y, 100);
-let Player2 = new Player(P2_START_X, P2_START_Y, 100);
 
 let projectilePool;
 let targetList;
+
+function drawObj(p, obj){
+   p.circle(obj.X, obj.Y, obj.Diameter)
+}
+
+function drawTargets(p, targets){
+    p.fill(0, 255, 0);
+    for (let i = 0; i < targets.length; i++){
+       if (targets[i].IsEnabled) drawObj(p, targets[i]);
+    }
+}
+
+function drawProjectiles(p, projectiles){
+    p.fill(0, 100, 0);
+    for (let i = 0; i < projectiles.length; i++){
+        if(projectiles[i].IsEnabled) drawObj(p, projectiles[i]);
+    }
+}
 
 
 export default class Game extends React.Component{
@@ -36,68 +36,71 @@ export default class Game extends React.Component{
     }
 
     Sketch = (p) => {
-
         p.setup = () => {
-            p.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-            projectilePool = makeProjectilePool(20);
-            targetList = initializeTargets(PLAYER_SPEED);
+
+            p.createCanvas(400, 400);
+            // projectilePool = makeProjectilePool(20);
+            // targetList = initializeTargets(PLAYER_SPEED);
         }
 
         p.draw = () => {
-           if (this.props.gameState == null) return;
+           if (this.props.gameState == null) {
+              console.log("No gamestate to render")
+              return
+           }
+
+          // console.log("recieved", this.props.gameState)
+
+          let gs = this.props.gameState
             p.background(220);
 
-            console.log("recieved", this.props.gameState)
+            // player 1
             p.fill(0, 0 , 255);
-            p.circle(this.props.gameState.Player1.Y, this.props.gameState.Player1.Y, 100);
+            p.circle(gs.Player1.X, gs.Player1.Y, 100);
 
-
-            p.fill(0, 0 , 255);
-            p.circle(Player1.x, Player1.y, PLAYER_WIDTH);
-
+            // player 2
             p.fill(255, 0 , 0);
-            p.circle(Player2.x, Player2.y, PLAYER_WIDTH);
+            p.circle(gs.Player2.X, gs.Player2.Y, 100);
 
-            drawProjectiles(projectilePool);
-            drawTargets(targetList);
-            checkCollisions(projectilePool, targetList);
+            drawProjectiles(p, gs.Projectiles);
+            drawTargets(p, gs.Targets);
         }
 
-        p.keyPressed = function() {
-            if (p.keyCode === 65 && !(Player1.x - PLAYER_SPEED <= 0)) {
-                Player1.x -= PLAYER_SPEED;
-            } else if (p.keyCode === 68 && !(Player1.x + PLAYER_SPEED >= CANVAS_WIDTH)) {
-                Player1.x += PLAYER_SPEED;
-            }
+        // p.keyPressed = function() {
+        //     if (p.keyCode === 65 && !(Player1.x - PLAYER_SPEED <= 0)) {
+        //         Player1.x -= PLAYER_SPEED;
+        //     } else if (p.keyCode === 68 && !(Player1.x + PLAYER_SPEED >= CANVAS_WIDTH)) {
+        //         Player1.x += PLAYER_SPEED;
+        //     }
 
-            if (p.keyCode === 74 && !(Player2.x - PLAYER_SPEED <= 0)) {
-                Player2.x -= PLAYER_SPEED;
-            } else if (p.keyCode === 76 && !(Player2.x + PLAYER_SPEED >= CANVAS_WIDTH)) {
-                Player2.x += PLAYER_SPEED;
-            }
+        //     if (p.keyCode === 74 && !(Player2.x - PLAYER_SPEED <= 0)) {
+        //         Player2.x -= PLAYER_SPEED;
+        //     } else if (p.keyCode === 76 && !(Player2.x + PLAYER_SPEED >= CANVAS_WIDTH)) {
+        //         Player2.x += PLAYER_SPEED;
+        //     }
 
-            if (p.keyCode === 83){ // ATTACK!
-                let projectile = projectilePool.shift();
-                projectile.isEnabled = true;
-                projectile.x = Player1.x;
-                projectile.y = Player1.y;
-                projectile.velocity = -3;
+        //     if (p.keyCode === 83){ // ATTACK!
+        //         let projectile = projectilePool.shift();
+        //         projectile.isEnabled = true;
+        //         projectile.x = Player1.x;
+        //         projectile.y = Player1.y;
+        //         projectile.velocity = -3;
 
-                projectilePool.push(projectile)
-            }
+        //         projectilePool.push(projectile)
+        //     }
 
-            if (p.keyCode === 75){ // ATTACK!
-                let projectile = projectilePool.shift();
-                projectile.isEnabled = true;
-                projectile.x = Player2.x;
-                projectile.y = Player2.y;
-                projectile.velocity = 3;
+        //     if (p.keyCode === 75){ // ATTACK!
+        //         let projectile = projectilePool.shift();
+        //         projectile.isEnabled = true;
+        //         projectile.x = Player2.x;
+        //         projectile.y = Player2.y;
+        //         projectile.velocity = 3;
 
-                projectilePool.push(projectile)
-            }
+        //         projectilePool.push(projectile)
+        //     }
 
-            return false
-        }
+        //     return false
+        // }
 
 
         /**
@@ -121,49 +124,6 @@ export default class Game extends React.Component{
 
             }
             return targets;
-        }
-
-
-        function drawTargets(targets){
-            p.fill(0, 200);
-            for (let i = 0; i < targets.length; i++){
-                if(targets[i].isEnabled){
-                    p.circle(targets[i].x, targets[i].y, targets[i].diameter);
-                    targets[i].y += targets[i].velocity
-                }
-            }
-        }
-
-
-        function drawProjectiles(projectilePool){
-            p.fill(0);
-            for (let i = 0; i < projectilePool.length; i++){
-                if(projectilePool[i].isEnabled){
-                    p.circle(projectilePool[i].x, projectilePool[i].y, projectilePool[i].diameter);
-                    projectilePool[i].y += projectilePool[i].velocity
-                }
-            }
-        }
-
-
-        function checkCollisions(projectiles, targets){
-
-            for(let i = 0; i < targets.length; i++){
-                if(targets[i].isEnabled === false) continue;
-
-                for(let j = 0; j < projectiles.length; j++){
-                    if(projectiles[j].isEnabled === false) continue;
-
-                    if(p.dist(targets[i].x, targets[i].y, projectiles[j].x, projectiles[j].y) < p.max(targets[i].diameter, projectiles[j].diameter)){
-
-                        projectiles[j].isEnabled = false
-
-                        targets[i].velocity += projectiles[j].velocity * PROJECTILE_DIAMETER_FORCE_MULT
-                        projectiles[j].velocity = 0
-                    }
-                }
-            }
-
         }
     }
 
