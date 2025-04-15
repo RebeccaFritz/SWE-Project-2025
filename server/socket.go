@@ -7,15 +7,25 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
+
+// define a global array for the all the lobby codes
+var LOBBY = make(map[string]Client)
+
+// define a global array for all the clients (identified by ther websocket connections)
+var CLIENTS = make(map[*websocket.Conn]Client)
+
+// define an empty Client struct for refrence purposes
+var zeroValClient Client
 
 // the client struct
 type Client struct {
 	score      int
 	health     int             // current health
-	position0  [2]int          // position as the token would appear on player 1's screen
-	position1  [2]int          // position as the token would appear on player 2's screen
+	position1  [2]int          // position as the token would appear on player 1's screen
+	position2  [2]int          // position as the token would appear on player 2's screen
 	playerNum  int             // 1 or 2 (default 0)
 	roomID     string          // (default "")
 	connection *websocket.Conn // the websocket connection this client is on
@@ -45,15 +55,17 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 	defer closeClient(websocket, client)
 
-	handleWrite(1, leaderboard, client.connection) // write the leaderboard data (1 is the msgType constant for text)
-	handleMessaging(websocket, client)
+	CLIENTS[client.connection] = client // add client to CLIENTS map
+
+	handleWrite(1, leaderboard, websocket) // write the leaderboard data (1 is the msgType constant for text)
+	handleMessaging(websocket)
 }
 
 // a function that sends a message to a single client
-func handleMessaging(websocket *websocket.Conn, client Client) {
+func handleMessaging(wsConnection *websocket.Conn) {
 	for tick := range time.Tick(time.Second / 1000) {
 		// the read waits until a message is recieved
-		msgType, message, err := handleRead(websocket)
+		msgType, message, err := handleRead(wsConnection)
 		if err != nil {
 			log.Println("Error reading message:", err)
 			break
@@ -61,7 +73,7 @@ func handleMessaging(websocket *websocket.Conn, client Client) {
 
 		message.CurTick = tick
 
-		handleWrite(msgType, message, client.connection) // echo back message
+		handleWrite(msgType, message, wsConnection) // echo back message
 	}
 }
 
@@ -71,32 +83,41 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	if err != nil {
 		return msgType, msgStruct{}, err
 	}
-	fmt.Printf("Received: %s\n", message)
+	// fmt.Printf("Received: %s\n", message)
 
 	// decode JSON data with Unmarshal function and store it in a temporary structure
-	var msgStruct msgStruct
-	err = json.Unmarshal(message, &msgStruct)
+	var incomingMsg msgStruct
+	err = json.Unmarshal(message, &incomingMsg)
 	if err != nil {
 		log.Println("Error:", err)
 	}
 
-	var curRoom = ROOMS[msgStruct.roomId]
+	var curRoom = ROOMS[incomingMsg.RoomId]
 
-	switch msgStruct.MsgType {
+	switch incomingMsg.MsgType {
 	case "client":
-		var client = curRoom.clients[msgStruct.playerIdx]
-		if msgStruct.playerIdx == 0 { // update client position
-			client.position0 = msgStruct.Position
-			client.position1 = reflect(msgStruct.Position)
+		var client = curRoom.clients[incomingMsg.PlayerNum]
+		if incomingMsg.PlayerNum == 0 { // update client position
+			client.position1 = incomingMsg.Position
+			client.position2 = reflect(incomingMsg.Position)
 		} else {
-			client.position0 = reflect(msgStruct.Position)
-			client.position1 = msgStruct.Position
+			client.position1 = reflect(incomingMsg.Position)
+			client.position2 = incomingMsg.Position
 		}
+	case "create lobby code":
+		fmt.Printf("Received: %s\n", message)
+		client := CLIENTS[websocket]
+		LOBBY[incomingMsg.LobbyCode] = client
+	case "lobby code":
+		fmt.Printf("Received: %s\n", message)
+		handleLobbyMessage(incomingMsg.LobbyCode, websocket)
+	case "test":
+		log.Println("msg: ", incomingMsg.Message)
 	default:
-		log.Println("Error: unknown message type")
+		log.Printf("Error: unknown message type '%s'", incomingMsg.MsgType)
 	}
 
-	return msgType, msgStruct, nil
+	return msgType, incomingMsg, nil
 }
 
 // handleWrite writes a message to a client
@@ -113,14 +134,15 @@ func handleWrite(msgType int, msgStruct msgStruct, websocket *websocket.Conn) {
 
 // this struct temporarily stores incoming message data before it is validated (if it starts with an uppercase letter it can be exported by Marshal())
 type msgStruct struct {
-	roomId      string     // the id of the room to which the client who sent the message belongs
-	playerIdx   int        // index of the client in their room (0 or 1)
-	targetIdx   int        // index of the target in the client's room (0 to 9)
+	RoomId      string     // the id of the room to which the client who sent the message belongs
+	PlayerNum   int        // index of the client in their room (1 or 2)
+	TargetIdx   int        // index of the target in the client's room (0 to 9)
 	MsgType     string     // the type of msg: "client", "target"
 	Position    [2]int     // a target or client position
 	Message     string     // other messages
 	CurTick     time.Time  // integer messages
 	Leaderboard []LB_Entry // array of leaderboard entries
+	LobbyCode   string     // for lobby code creation or connection
 }
 
 // the reflect function flips the given (x, y) coordinates about the middle of the screen
@@ -137,4 +159,45 @@ func closeClient(websocket *websocket.Conn, client Client) {
 		curRoom.clients[client.playerNum] = Client{}
 	}
 	websocket.Close()
+}
+
+// this function handles incoming messages of the type "Lobby Code"
+// it (1) checks to see if the provided lobby code is correct,
+// (2a) if correct it places both the provided client and the client with the matching code in a new room
+// (2b) if wrong it send the client back an error message
+func handleLobbyMessage(LobbyCode string, wsConnection *websocket.Conn) {
+
+	value := LOBBY[LobbyCode]
+
+	if value != zeroValClient {
+		roomID := uuid.NewString() // generate unique string to id the room
+		curRoom := ROOMS[roomID]
+		// place the clients in the room
+		curRoom.clients[0] = value
+		curRoom.clients[1] = CLIENTS[wsConnection]
+		// assign player1 and player2
+		curRoom.clients[0].playerNum = 1
+		curRoom.clients[1].playerNum = 2
+		// set default room values
+		curRoom.clients[0].score = 0
+		curRoom.clients[1].score = 0
+		curRoom.clients[0].health = 5
+		curRoom.clients[1].health = 5
+		curRoom.clients[0].roomID = roomID
+		curRoom.clients[1].roomID = roomID
+
+		goodMsg := msgStruct{
+			MsgType: "validate lobby code",
+			Message: "Your lobby code has sucessfully matched",
+		}
+		handleWrite(1, goodMsg, wsConnection)
+		handleWrite(1, goodMsg, value.connection) // write confirmation to opponent
+	} else {
+		badMsg := msgStruct{
+			MsgType: "validate lobby code",
+			Message: "The provided lobby code does not match any of the existing codes",
+		}
+		handleWrite(1, badMsg, wsConnection)
+	}
+
 }
