@@ -64,7 +64,9 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 // a function that sends a message to a single client
 func handleMessaging(wsConnection *websocket.Conn) {
-	for tick := range time.Tick(time.Second / 1000) {
+
+	// according to Prof. Mirabelli, the ideal tick rates are sec/30, sec/60, and sec/120
+	for tick := range time.Tick(time.Second / 60) {
 		// the read waits until a message is recieved
 		msgType, message, err := handleRead(wsConnection)
 		if err != nil {
@@ -99,7 +101,6 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	writeToFile(file, fullMessage)
 
 	// fmt.Printf("Received: %s\n", message)
-
 
 	// decode JSON data with Unmarshal function and store it in a temporary structure
 	var incomingMsg msgStruct
