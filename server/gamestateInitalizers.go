@@ -14,15 +14,17 @@ func initGameState()(Gamestate){
 
 // initPlayer creates a blank player
 func initPlayer(idx int)(Player){
-	return Player { X: 0, Y: 0, Diameter: 0, Velocity: 0, Idx: idx}
+	return Player { X: 200, Y:390, Diameter: 0, Velocity: 0, Idx: idx}
 }
 
 // initTargets creates the targets
-func initTargets()([]Target){
-	t1 := Target{350, 350, 10, 0, true}
-	t2 := Target{300, 300, 10, 0, true}
-	targets := []Target{t1, t2}
-	return targets
+func initTargets()[]Target{
+	targets := []Target{}
+
+   for i := PLAYER_MOVE_LENGTH; i < CANVAS_WIDTH; i+=PLAYER_MOVE_LENGTH {
+   	targets = append(targets, Target{X:i, Y:CANVAS_HEIGHT/2, Velocity: 0, Diameter: 10, IsEnabled: true})
+   }
+	return targets;
 }
 
 func initProjectiles()([]Projectile){
