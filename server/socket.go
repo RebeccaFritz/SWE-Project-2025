@@ -100,8 +100,6 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 
 	writeToFile(file, fullMessage)
 
-	// fmt.Printf("Received: %s\n", message)
-
 	// decode JSON data with Unmarshal function and store it in a temporary structure
 	var incomingMsg msgStruct
 	err = json.Unmarshal(message, &incomingMsg)
@@ -122,12 +120,9 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 			client.position2 = incomingMsg.Position
 		}
 	case "create lobby code":
-		fmt.Printf("Received: %s\n", message)
-		client := CLIENTS[websocket]
-		LOBBY[incomingMsg.LobbyCode] = client
+		createLobbyCode(incomingMsg.LobbyCode, websocket)
 	case "lobby code":
-		fmt.Printf("Received: %s\n", message)
-		handleLobbyMessage(incomingMsg.LobbyCode, websocket)
+		matchLobbyCode(incomingMsg.LobbyCode, websocket)
 	case "test":
 		log.Println("msg: ", incomingMsg.Message)
 	default:
@@ -186,11 +181,27 @@ func closeClient(websocket *websocket.Conn, client Client) {
 	websocket.Close()
 }
 
+func createLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
+	value := LOBBY[LobbyCode]
+
+	if value == zeroValClient {
+		// if the lobby code has not been used
+		client := CLIENTS[wsConnection]
+		LOBBY[LobbyCode] = client
+	} else {
+		badMsg := msgStruct{
+			MsgType: "validate lobby code",
+			Message: "This lobby code has already been used",
+		}
+		handleWrite(1, badMsg, wsConnection)
+	}
+}
+
 // this function handles incoming messages of the type "Lobby Code"
 // it (1) checks to see if the provided lobby code is correct,
 // (2a) if correct it places both the provided client and the client with the matching code in a new room
 // (2b) if wrong it send the client back an error message
-func handleLobbyMessage(LobbyCode string, wsConnection *websocket.Conn) {
+func matchLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
 
 	value := LOBBY[LobbyCode]
 
@@ -217,6 +228,8 @@ func handleLobbyMessage(LobbyCode string, wsConnection *websocket.Conn) {
 		}
 		handleWrite(1, goodMsg, wsConnection)
 		handleWrite(1, goodMsg, value.connection) // write confirmation to opponent
+
+		delete(LOBBY, LobbyCode) // remove the used lobby code from the LOBBY map
 	} else {
 		badMsg := msgStruct{
 			MsgType: "validate lobby code",
