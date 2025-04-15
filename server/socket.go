@@ -12,10 +12,6 @@ import (
 
 // the client struct
 type Client struct {
-	score      int
-	health     int             // current health
-	position0  [2]int          // position as the token would appear on player 1's screen
-	position1  [2]int          // position as the token would appear on player 2's screen
 	playerNum  int             // 1 or 2 (default 0)
 	roomID     string          // (default "")
 	connection *websocket.Conn // the websocket connection this client is on
@@ -81,18 +77,7 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 		log.Println("Error:", err)
 	}
 
-	var curRoom = ROOMS[msgStruct.roomId]
-
 	switch msgStruct.MsgType {
-	case "client":
-		var client = curRoom.clients[msgStruct.playerIdx]
-		if msgStruct.playerIdx == 0 { // update client position
-			client.position0 = msgStruct.Position
-			client.position1 = reflect(msgStruct.Position)
-		} else {
-			client.position0 = reflect(msgStruct.Position)
-			client.position1 = msgStruct.Position
-		}
 	default:
 		log.Println("Error: unknown message type")
 	}
@@ -116,9 +101,7 @@ func handleWrite(msgType int, msgStruct msgStruct, websocket *websocket.Conn) {
 type msgStruct struct {
 	roomId      string     // the id of the room to which the client who sent the message belongs
 	playerIdx   int        // index of the client in their room (0 or 1)
-	targetIdx   int        // index of the target in the client's room (0 to 9)
 	MsgType     string     // the type of msg: "client", "target"
-	Position    [2]int     // a target or client position
 	Message     string     // other messages
 	CurTick     time.Time  // integer messages
 	Leaderboard []LB_Entry // array of leaderboard entries
