@@ -205,7 +205,7 @@ func matchLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
 
 	value := LOBBY[LobbyCode]
 
-	if value != zeroValClient {
+	if value != zeroValClient && value.connection != wsConnection {
 		roomID := uuid.NewString() // generate unique string to id the room
 		curRoom := ROOMS[roomID]
 		// place the clients in the room
@@ -230,6 +230,12 @@ func matchLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
 		handleWrite(1, goodMsg, value.connection) // write confirmation to opponent
 
 		delete(LOBBY, LobbyCode) // remove the used lobby code from the LOBBY map
+	} else if value != zeroValClient && value.connection == wsConnection {
+		badMsg := msgStruct{
+			MsgType: "validate lobby code",
+			Message: "You cannot connect to your own lobby",
+		}
+		handleWrite(1, badMsg, wsConnection)
 	} else {
 		badMsg := msgStruct{
 			MsgType: "validate lobby code",
