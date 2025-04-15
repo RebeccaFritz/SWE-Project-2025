@@ -10,7 +10,7 @@ import (
 // define a global array for the all the rooms
 var ROOMS map[string]Room
 
-	@@ -15,128 +8,15 @@ type Room struct {
+type Room struct {
 	isFull      bool       // Room has two clients
 	inGamestate bool       // is the room in the gamestate
 	clients     [2]Client  // clients in the room
