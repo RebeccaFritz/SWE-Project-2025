@@ -50,8 +50,7 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 	// create a new client structure with this websocket connection
 	client := Client{
 		connection: websocket,
-		roomID:     uuid.NewString(), // generate unique string to id the room (will be updated if client joins another room)
-		playerNum:  0,                // set to player 0 (will be updated if client joins another room)
+		playerNum:  0, // set to player 0 (will be updated if client joins another room)
 	}
 
 	defer closeClient(websocket, client)
@@ -105,15 +104,6 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 			client.position1 = reflect(incomingMsg.Position)
 			client.position2 = incomingMsg.Position
 		}
-	case "target":
-		var target = curRoom.targets[incomingMsg.TargetIdx]
-		if incomingMsg.PlayerNum == 0 { // update target position
-			target.position0 = reflect(incomingMsg.Position)
-			target.position1 = incomingMsg.Position
-		} else {
-			target.position0 = incomingMsg.Position
-			target.position1 = reflect(incomingMsg.Position)
-		}
 	case "create lobby code":
 		fmt.Printf("Received: %s\n", message)
 		client := CLIENTS[websocket]
@@ -163,9 +153,11 @@ func reflect(position [2]int) [2]int {
 }
 
 func closeClient(websocket *websocket.Conn, client Client) {
-	curRoom := ROOMS[client.roomID]
-	// remove client from Room by setting it to an uninitialized Client struct
-	curRoom.clients[client.playerNum] = Client{}
+	if client.roomID != "" {
+		curRoom := ROOMS[client.roomID]
+		// remove client from Room by setting it to an uninitialized Client struct
+		curRoom.clients[client.playerNum] = Client{}
+	}
 	websocket.Close()
 }
 
