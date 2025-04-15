@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Game from "./game/Game";
+import Game from "./Game";
 import HomeScreen from './homescreen';
 
 export default function App() {
