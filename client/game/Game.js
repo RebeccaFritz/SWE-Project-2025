@@ -4,12 +4,6 @@ import { GameState, Projectile } from "./gameState.js";
 import { Player } from "./gameState.js";
 import { Target } from "./gameState.js";
 
-const TARGET_DIAMETER = 20;
-const PROJECTILE_DIAMETER = 10;
-
-let projectilePool;
-let targetList;
-
 function drawObj(p, obj){
    p.circle(obj.X, obj.Y, obj.Diameter)
 }
@@ -37,10 +31,7 @@ export default class Game extends React.Component{
 
     Sketch = (p) => {
         p.setup = () => {
-
             p.createCanvas(400, 400);
-            // projectilePool = makeProjectilePool(20);
-            // targetList = initializeTargets(PLAYER_SPEED);
         }
 
         p.draw = () => {
@@ -101,30 +92,6 @@ export default class Game extends React.Component{
 
         //     return false
         // }
-
-
-        /**
-         * Returns a queue of n projectiles
-         */
-        function makeProjectilePool(length){
-            let queue = [];
-
-            for (let i = 0; i < length; i++){
-                queue.push(new Projectile(0, 0, 0, false, PROJECTILE_DIAMETER));
-            }
-
-            return queue;
-        }
-
-        function initializeTargets(step){
-            let targets = [];
-            for(let i = step; i < CANVAS_WIDTH; i+=step){
-
-                targets.push(new Target(i, CANVAS_HEIGHT/2, 0, true, TARGET_DIAMETER));
-
-            }
-            return targets;
-        }
     }
 
     componentDidMount() {
