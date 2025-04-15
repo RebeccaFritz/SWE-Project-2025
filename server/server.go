@@ -31,7 +31,11 @@ func main() {
 
 	// This spins up an independant game loop thread.
 	go runGameLoop(true)
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 2788d0532a7de43993dd65729e91fb20f65b07fe
 	http.HandleFunc("/ws", wsHandler)
 	fmt.Println("WebSocket server started on :8080")
 	http.ListenAndServe(":8080", nil)
