@@ -1,8 +1,5 @@
 import React from 'react'
 import p5 from 'p5';
-import { GameState, Projectile } from "./gameState.js";
-import { Player } from "./gameState.js";
-import { Target } from "./gameState.js";
 
 function drawObj(p, obj){
    p.circle(obj.X, obj.Y, obj.Diameter)
