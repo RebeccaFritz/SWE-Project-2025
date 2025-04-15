@@ -71,6 +71,7 @@ export default function App() {
 
         <div>
             <Homescreen socket={ws} leaderboard={leaderboard} />
+            <Game />
         </div>
     );
 }
