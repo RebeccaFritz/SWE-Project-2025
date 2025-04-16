@@ -31,7 +31,7 @@ func runGameLoop(printDebug bool, client1 Client, client2 Client){
 
 	for range time.Tick(TICK_DURATION){
 		// input_queue := readPlayerInput() // this function should retrieve input that has been stored by the relevant pumps
-		input_queue := []string{} // for testing
+		// input_queue := []string{} // for testing
 		gamestate = updateGameState(gamestate, input_queue)
 		writeGameState(client1.connection, gamestate)
 		// writeGameState(client2.connection, flipGameState(gamestate))

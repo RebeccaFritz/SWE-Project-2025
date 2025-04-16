@@ -11,6 +11,7 @@ export default function App() {
     useEffect(() => {
         // create WebSocket at the server port
         const socket = new WebSocket('ws://localhost:8080/ws');
+        setWS(socket)
 
         // open WebSocket
         socket.onopen = () => {
@@ -30,7 +31,7 @@ export default function App() {
 
             switch (msgType) {
                case "gamestate":
-                  console.log(serverMessage.Gamestate)
+                  // console.log(serverMessage.Gamestate)
                   setGamestate(serverMessage.Gamestate)
                   // socket.send(JSON.stringify({
                   //     MsgType: "pong",
@@ -78,7 +79,7 @@ export default function App() {
         <div>
             <HomeScreen leaderboard={leaderboard} />
             <div className="game" >
-               <Game gameState={gameState}/>
+               <Game gameState={gameState} socket={ws}/>
             </div>
         </div>
     );
