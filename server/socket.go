@@ -10,6 +10,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var INPUT_QUEUE = []string{}
+
 // the client struct
 type Client struct {
 	score      int
@@ -93,6 +95,8 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 			client.position0 = reflect(msgStruct.Position)
 			client.position1 = msgStruct.Position
 		}
+	case "input":
+		INPUT_QUEUE = append(INPUT_QUEUE, msgStruct.Input)
 	default:
 		log.Println("Error: unknown message type")
 	}
@@ -123,6 +127,7 @@ type msgStruct struct {
 	CurTick     time.Time  // integer messages
 	Leaderboard []LB_Entry // array of leaderboard entries
 	Gamestate Gamestate
+	Input string
 }
 
 // the reflect function flips the given (x, y) coordinates about the middle of the screen
