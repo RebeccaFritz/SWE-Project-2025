@@ -33,7 +33,10 @@ func runGameLoop(printDebug bool, client1 Client, client2 Client){
 		// input_queue := readPlayerInput() // this function should retrieve input that has been stored by the relevant pumps
 		// input_queue := []string{} // for testing
 		gamestate = updateGameState(gamestate, INPUT_QUEUE)
-		writeGameState(client1.connection, gamestate)
+
+		gamstateMsg := msgStruct { MsgType: "gamestate", Gamestate: gamestate }
+		handleWrite(1, gamstateMsg, client1.connection)
+
 		// writeGameState(client2.connection, flipGameState(gamestate))
 
 		// Clear applied player input
