@@ -4,13 +4,14 @@ import HomeScreen from './homescreen';
 
 export default function App() {
     const [message, setMessage] = useState('');
-    const [leaderboard, setLeaderboard] = useState(null);
+    const [leaderboard, setLeaderboard] = useState([]);
     var [gameState, setGamestate] = useState(null);
     const [ws, setWS] = useState(null);
 
     useEffect(() => {
         // create WebSocket at the server port
         const socket = new WebSocket('ws://localhost:8080/ws');
+        setWS(socket);
 
         // open WebSocket
         socket.onopen = () => {
@@ -25,8 +26,8 @@ export default function App() {
         socket.onmessage = (event) => {
             //console.log('Message received: ', event.data);
 
-            serverMessage = JSON.parse(event.data);
-            msgType = serverMessage.MsgType;
+            var serverMessage = JSON.parse(event.data);
+            var msgType = serverMessage.MsgType;
 
             switch (msgType) {
                case "gamestate":
@@ -50,6 +51,8 @@ export default function App() {
                         Message: "Leaderboard updated!"
                     }))
                     return;
+                case "validate lobby code":
+                    console.log('Message received: ', event.data);
                 default:
                     setMessage(serverMessage);
                     // socket.send(JSON.stringify({
@@ -74,9 +77,8 @@ export default function App() {
 
     return (
         // display the client UI
-
         <div>
-            <HomeScreen leaderboard={leaderboard} />
+            <HomeScreen socket={ws} leaderboard={leaderboard} />
             <div className="game" >
                <Game gameState={gameState}/>
             </div>

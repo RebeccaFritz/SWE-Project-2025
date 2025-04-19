@@ -9,7 +9,7 @@ type Gamestate struct {
 
 type Player struct {
 	X int;
-	Y int `json:"Y"`
+	Y int;
 	Diameter int;
 	Velocity int;
 	Idx int;
