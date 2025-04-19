@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import Game from "./game/Game";
-import Homescreen from './homescreen'; 
+import Game from "./Game";
+import HomeScreen from './homescreen';
 
 export default function App() {
     const [message, setMessage] = useState('');
     const [leaderboard, setLeaderboard] = useState([]);
+    var [gameState, setGamestate] = useState(null);
     const [ws, setWS] = useState(null);
 
     useEffect(() => {
@@ -29,6 +30,14 @@ export default function App() {
             var msgType = serverMessage.MsgType;
 
             switch (msgType) {
+               case "gamestate":
+                  console.log(serverMessage.Gamestate)
+                  setGamestate(serverMessage.Gamestate)
+                  // socket.send(JSON.stringify({
+                  //     MsgType: "pong",
+                  //     Message: "recieved gamestate!"
+                  // }))
+                  return;
                 case "test":
                     socket.send(JSON.stringify({
                         MsgType: "client",
@@ -46,11 +55,11 @@ export default function App() {
                     console.log('Message received: ', event.data);
                 default:
                     setMessage(serverMessage);
-                    socket.send(JSON.stringify({
-                        MsgType: "client",
-                        Message: "Carry on"
-                    }))
-                    return;
+                    // socket.send(JSON.stringify({
+                    //     MsgType: "client",
+                    //     Message: "Carry on"
+                    // }))
+                    // return;
             }
         };
 
@@ -68,10 +77,11 @@ export default function App() {
 
     return (
         // display the client UI
-
         <div>
-            <Homescreen socket={ws} leaderboard={leaderboard} />
-            <Game />
+            <HomeScreen socket={ws} leaderboard={leaderboard} />
+            <div className="game" >
+               <Game gameState={gameState}/>
+            </div>
         </div>
     );
 }

@@ -23,10 +23,6 @@ var zeroValClient Client
 
 // the client struct
 type Client struct {
-	score      int
-	health     int             // current health
-	position1  [2]int          // position as the token would appear on player 1's screen
-	position2  [2]int          // position as the token would appear on player 2's screen
 	playerNum  int             // 1 or 2 (default 0)
 	roomID     string          // (default "")
 	connection *websocket.Conn // the websocket connection this client is on
@@ -55,6 +51,8 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	defer closeClient(websocket, client)
+
+	go runGameLoop(false, client, client)
 
 	CLIENTS[client.connection] = client // add client to CLIENTS map
 
@@ -107,18 +105,9 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 		log.Println("Error:", err)
 	}
 
-	var curRoom = ROOMS[incomingMsg.RoomId]
+	// var curRoom = ROOMS[incomingMsg.RoomId]
 
 	switch incomingMsg.MsgType {
-	case "client":
-		var client = curRoom.clients[incomingMsg.PlayerNum]
-		if incomingMsg.PlayerNum == 0 { // update client position
-			client.position1 = incomingMsg.Position
-			client.position2 = reflect(incomingMsg.Position)
-		} else {
-			client.position1 = reflect(incomingMsg.Position)
-			client.position2 = incomingMsg.Position
-		}
 	case "create lobby code":
 		createLobbyCode(incomingMsg.LobbyCode, websocket)
 	case "lobby code":
@@ -158,10 +147,10 @@ type msgStruct struct {
 	PlayerNum   int        // index of the client in their room (1 or 2)
 	TargetIdx   int        // index of the target in the client's room (0 to 9)
 	MsgType     string     // the type of msg: "client", "target"
-	Position    [2]int     // a target or client position
 	Message     string     // other messages
 	CurTick     time.Time  // integer messages
 	Leaderboard []LB_Entry // array of leaderboard entries
+	Gamestate 	Gamestate
 	LobbyCode   string     // for lobby code creation or connection
 }
 
@@ -215,10 +204,6 @@ func matchLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
 		curRoom.clients[0].playerNum = 1
 		curRoom.clients[1].playerNum = 2
 		// set default room values
-		curRoom.clients[0].score = 0
-		curRoom.clients[1].score = 0
-		curRoom.clients[0].health = 5
-		curRoom.clients[1].health = 5
 		curRoom.clients[0].roomID = roomID
 		curRoom.clients[1].roomID = roomID
 

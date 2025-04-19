@@ -31,10 +31,6 @@ func main() {
 	leaderboard = getLeaderboard(db)
 
 	os.Create("../server/server-messages.txt") // create a file to recieve incoming messages to the server
-
-	// This spins up an independant game loop thread.
-	go runGameLoop(true)
-
 	http.HandleFunc("/ws", wsHandler)
 	fmt.Println("WebSocket server started on :8080")
 	http.ListenAndServe(":8080", nil)
