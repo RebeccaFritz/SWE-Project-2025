@@ -159,13 +159,6 @@ type msgStruct struct {
 	LobbyCode   string     // for lobby code creation or connection
 }
 
-// the reflect function flips the given (x, y) coordinates about the middle of the screen
-// so that that object will display correctly on the other player's screen
-func reflect(position [2]int) [2]int {
-	var reflectedPos = [2]int{-position[0], -position[1]} // flip about the origin
-	return reflectedPos
-}
-
 func closeClient(websocket *websocket.Conn, client Client) {
 	if client.roomID != "" {
 		curRoom := ROOMS[client.roomID]
