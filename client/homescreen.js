@@ -1,16 +1,46 @@
+import React from 'react'
+
+// hiiiii
+
+var lobbyData = '';
+var socket = null;
+
 // make the article component
 function MenuButton({value}){
+    function buttonClick(){
+        sendCode(value);
+    }
+    function buttonInput(event) {
+        lobbyData = event.target.value;
+    }
     return(
         <article>
             {value}
-            <input type="text"/>
-            <br></br>
-            <input type="submit" value="Submit code"/>
+            <form name="Lobby" onChange={buttonInput}>
+                <input type="text" name="menuButton"/><br/>
+                <button type="button" onClick={buttonClick}>{value}</button>
+            </form>
         </article>
     );
 }
 
-function leaderboardEntry(username, wins) {
+function sendCode(value){
+    if(value === "Start Game"){
+        socket.send(JSON.stringify({
+            MsgType: "create lobby code",
+            LobbyCode: lobbyData,
+        }))
+    }
+    else if(value === "Join Game"){
+        socket.send(JSON.stringify({
+            MsgType: "lobby code",
+            LobbyCode: lobbyData,
+        }))
+    }
+    console.log("Lobby code sent");
+}
+
+function leaderboardEntry(username, wins, i) {
     return (
         <tr>
             <td>{username}</td>
@@ -24,20 +54,22 @@ function Leaderboard({leaderboard}){
     if(leaderboard != null){
         const entries = []; // leaderboard entries
         for(let i = 0; i < leaderboard.length && i < 10; i++) {
-            entries.push(leaderboardEntry(leaderboard[i].Username, leaderboard[i].Wins));
+            entries.push(leaderboardEntry(leaderboard[i].Username, leaderboard[i].Wins, i));
         }
         return(
             <>
                 <nav>
                     <table>
-                        <tr>
-                            <th colSpan="2">Leaderboard</th>
-                        </tr>
-                        <tr>
-                            <th>Username</th>
-                            <th>Wins</th>
-                        </tr>
-                        {entries}
+                        <tbody>
+                            <tr>
+                                <th colSpan="2">Leaderboard</th>
+                            </tr>
+                            <tr>
+                                <th>Username</th>
+                                <th>Wins</th>
+                            </tr>
+                            {entries}
+                        </tbody>
                     </table>
                 </nav>
             </>
@@ -46,7 +78,7 @@ function Leaderboard({leaderboard}){
 }
 
 // Home Screen Component
-export default function HomeScreen({leaderboard}){
+function renderHomescreen({leaderboard}){
     return(
         <div id = "strip">
             <header>
@@ -61,3 +93,22 @@ export default function HomeScreen({leaderboard}){
         </div>
     );
 }
+
+const Homescreen = (props) => {
+    socket = props.socket
+    return(
+        <div id = "strip">
+            <header>
+                <h1>Bit Battle 1.0.0</h1>
+            </header>
+            <br/>
+            <section>
+                <Leaderboard leaderboard={props.leaderboard}/>
+                <MenuButton value="Start Game"/>
+                <MenuButton value="Join Game"/>
+            </section>
+        </div>
+    );
+}
+
+export default Homescreen;

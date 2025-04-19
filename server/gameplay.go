@@ -18,7 +18,7 @@ type Room struct {
 }
 
 // flipGameState flips the given gamestate so that player 2 can render it correctly
-func flipGameState(gs Gamestate)(Gamestate){
+func flipGameState(gs Gamestate) Gamestate {
 	gs = copyGameState(gs)
 
 	return gs
