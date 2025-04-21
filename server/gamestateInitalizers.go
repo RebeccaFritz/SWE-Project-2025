@@ -14,7 +14,11 @@ func initGameState() Gamestate {
 
 // initPlayer creates a blank player
 func initPlayer(idx int) Player {
-	return Player{X: 200, Y: 390, Diameter: 0, Velocity: 0, Idx: idx}
+	if (idx == 1){
+		return Player{X: 200, Y: 390, Diameter: 0, Velocity: 0, Idx: idx}
+	}
+
+	return Player{X: 200, Y: 10, Diameter: 0, Velocity: 0, Idx: idx}
 }
 
 // initTargets creates the targets
