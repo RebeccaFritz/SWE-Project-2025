@@ -7,14 +7,12 @@ import (
 	"time"
 )
 
-// define a global array for the all the rooms
-var ROOMS map[string]Room
 
 // the Room struct contains all the information for one game
 type Room struct {
-	isFull      bool       // Room has two clients
-	inGamestate bool       // is the room in the gamestate
-	clients     [2]Client  // clients in the room
+	gamestate	Gamestate
+	inputQueue	[]string
+	clients     [2]*Client  // clients in the room
 }
 
 // flipGameState flips the given gamestate so that player 2 can render it correctly
@@ -24,30 +22,27 @@ func flipGameState(gs Gamestate) Gamestate {
 	return gs
 }
 
-// runGameLoop is the entrypoint for a game session.
+// runGameLoop updates the gamestate based on player input and writes it to the players in the room
 // printDebug controls whether the gamestate is printed to the screen
-func runGameLoop(printDebug bool, client1 Client, client2 Client){
-	gamestate := initGameState()
-
+func runGameLoop(printDebug bool, room *Room){
+	// log.Println("I am the game thread and here is the room i got: ", *room)
 	for range time.Tick(TICK_DURATION){
-		// input_queue := readPlayerInput() // this function should retrieve input that has been stored by the relevant pumps
-		// input_queue := []string{} // for testing
-		gamestate = updateGameState(gamestate, INPUT_QUEUE)
+		room.gamestate = updateGameState(room.gamestate, room.inputQueue)
 
-		gamstateMsg := msgStruct { MsgType: "gamestate", Gamestate: gamestate }
-		handleWrite(1, gamstateMsg, client1.connection)
-
-		// writeGameState(client2.connection, flipGameState(gamestate))
+		gamestateMsg := msgStruct { MsgType: "gamestate", Gamestate: room.gamestate }
+		handleWrite(1, gamestateMsg, room.clients[0].connection)
+		handleWrite(1, gamestateMsg, room.clients[1].connection)
 
 		// Clear applied player input
-		INPUT_QUEUE = []string{}
+		room.inputQueue = []string{}
 
 		if(printDebug){
 			log.Println("Gamestate")
-			fmt.Printf("Projectiles: %+v\n", gamestate.Projectiles)
-			fmt.Printf("Targets: %+v\n", gamestate.Targets)
-			fmt.Printf("Player 1: %+v\n", gamestate.Player1)
-			fmt.Printf("Player 2: %+v\n\n", gamestate.Player2)
+			fmt.Printf("Projectiles: %+v\n", room.gamestate.Projectiles)
+			fmt.Printf("Input queue: %+v\n", room.inputQueue)
+			fmt.Printf("Targets: %+v\n", room.gamestate.Targets)
+			fmt.Printf("Player 1: %+v\n", room.gamestate.Player1)
+			fmt.Printf("Player 2: %+v\n\n", room.gamestate.Player2)
 		}
 	}
 }
