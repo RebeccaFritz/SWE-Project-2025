@@ -8,12 +8,6 @@ import (
 )
 
 
-// the Room struct contains all the information for one game
-type Room struct {
-	gamestate	Gamestate
-	inputQueue	[]string
-	clients     [2]*Client  // clients in the room
-}
 
 // flipGameState flips the given gamestate so that player 2 can render it correctly
 func flipGameState(gs Gamestate) Gamestate {

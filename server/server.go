@@ -8,7 +8,6 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
-var leaderboard msgStruct // make leaderboard global
 
 func main() {
 	db, err := connect_db("../data/db.sqlite")
