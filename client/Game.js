@@ -20,6 +20,7 @@ function drawProjectiles(p, projectiles){
 }
 
 let socket
+let gs
 
 export default class Game extends React.Component{
     constructor(props) {
@@ -34,14 +35,14 @@ export default class Game extends React.Component{
 
         p.draw = () => {
            socket = this.props.socket
-           if (this.props.gameState == null) {
+           gs = this.props.gameState
+           if (gs == null) {
               console.log("No gamestate to render")
               return
            }
 
           // console.log("recieved", this.props.gameState)
 
-          let gs = this.props.gameState
             p.background(220);
 
             // player 1
@@ -71,7 +72,7 @@ export default class Game extends React.Component{
                 default: null
             }
 
-            if (input == null) return
+            if (input == null || gs == null) return
 
             socket.send(JSON.stringify({
                 MsgType: "input",
