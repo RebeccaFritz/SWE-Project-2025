@@ -8,7 +8,6 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
-
 func main() {
 	db, err := connect_db("../data/db.sqlite")
 

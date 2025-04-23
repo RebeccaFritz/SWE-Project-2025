@@ -31,7 +31,7 @@ func matchLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
 	otherClient, otherClientExists := LOBBY[LobbyCode]
 	thisClient, thisClientExists := CLIENTS[wsConnection]
 
-	if(!thisClientExists){
+	if !thisClientExists {
 		log.Println("Error: a client tried to join a room but it is not in the client map!")
 		return
 	}
@@ -65,7 +65,7 @@ func matchLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
 	}
 }
 
-func NewRoom(client1 *Client, client2 *Client)*Room{
+func NewRoom(client1 *Client, client2 *Client) *Room {
 	roomID := uuid.NewString() // generate unique string to id the room
 	room := Room{}
 

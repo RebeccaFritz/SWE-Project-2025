@@ -11,7 +11,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-
 // variable used to upgrade HTTP connections to WebSocket connections
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {

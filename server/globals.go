@@ -1,6 +1,6 @@
 package main
 
-import(
+import (
 	"github.com/gorilla/websocket"
 	"time"
 )
@@ -28,9 +28,9 @@ type Client struct {
 
 // the Room struct contains all the information for one game
 type Room struct {
-	gamestate	Gamestate
-	inputQueue	[]string
-	clients     [2]*Client  // clients in the room
+	gamestate  Gamestate
+	inputQueue []string
+	clients    [2]*Client // clients in the room
 }
 
 // this struct temporarily stores incoming message data before it is validated (if it starts with an uppercase letter it can be exported by Marshal())
