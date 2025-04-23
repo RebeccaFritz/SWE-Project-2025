@@ -17,49 +17,38 @@ export default function App() {
         socket.onopen = () => {
             console.log('WebSocket connection established');
             socket.send(JSON.stringify({
-                MsgType: "test",
-                Message: "Hello!"
+                MsgType: "status",
+                Message: "Connected."
             }))
         };
 
         // if a message is received over WebSocket, parse the JSON and grab the .message
         socket.onmessage = (event) => {
-            //console.log('Message received: ', event.data);
 
             var serverMessage = JSON.parse(event.data);
             var msgType = serverMessage.MsgType;
 
             switch (msgType) {
                case "gamestate":
-                  console.log(serverMessage.Gamestate)
                   setGamestate(serverMessage.Gamestate)
-                  // socket.send(JSON.stringify({
-                  //     MsgType: "pong",
-                  //     Message: "recieved gamestate!"
-                  // }))
                   return;
                 case "test":
                     socket.send(JSON.stringify({
-                        MsgType: "client",
+                        MsgType: "status",
                         Message: "We are live!"
                     }))
                     return;
                 case "leaderboard":
                     setLeaderboard(serverMessage.Leaderboard);
                     socket.send(JSON.stringify({
-                        MsgType: "client",
-                        Message: "Leaderboard updated!"
+                        MsgType: "status",
+                        Message: "Leaderboard updated."
                     }))
                     return;
                 case "validate lobby code":
                     console.log('Message received: ', event.data);
                 default:
                     setMessage(serverMessage);
-                    // socket.send(JSON.stringify({
-                    //     MsgType: "client",
-                    //     Message: "Carry on"
-                    // }))
-                    // return;
             }
         };
 
@@ -80,7 +69,7 @@ export default function App() {
         <div>
             <HomeScreen socket={ws} leaderboard={leaderboard} />
             <div className="game" >
-               <Game gameState={gameState}/>
+               <Game gameState={gameState} socket={ws}/>
             </div>
         </div>
     );

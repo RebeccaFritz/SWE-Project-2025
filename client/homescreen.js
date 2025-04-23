@@ -1,4 +1,6 @@
-import React from "react";
+import React from 'react'
+
+// hiiiii
 
 var lobbyData = '';
 var socket = null;
@@ -66,7 +68,7 @@ function Leaderboard({leaderboard}){
                                 <th>Username</th>
                                 <th>Wins</th>
                             </tr>
-                            {entries}        
+                            {entries}
                         </tbody>
                     </table>
                 </nav>

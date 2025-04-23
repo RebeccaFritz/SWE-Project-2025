@@ -8,8 +8,6 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
-var leaderboard msgStruct // make leaderboard global
-
 func main() {
 	db, err := connect_db("../data/db.sqlite")
 
@@ -28,7 +26,7 @@ func main() {
 	increment_wins("Amoniker", db)
 
 	// get leaderboard data from SQL database
-	leaderboard = getLeaderboard(db)
+	LEADERBOARD = getLeaderboard(db)
 
 	os.Create("../server/server-messages.txt") // create a file to recieve incoming messages to the server
 	http.HandleFunc("/ws", wsHandler)

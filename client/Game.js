@@ -19,6 +19,8 @@ function drawProjectiles(p, projectiles){
     }
 }
 
+let socket
+let gs
 
 export default class Game extends React.Component{
     constructor(props) {
@@ -32,14 +34,15 @@ export default class Game extends React.Component{
         }
 
         p.draw = () => {
-           if (this.props.gameState == null) {
+           socket = this.props.socket
+           gs = this.props.gameState
+           if (gs == null) {
               console.log("No gamestate to render")
               return
            }
 
           // console.log("recieved", this.props.gameState)
 
-          let gs = this.props.gameState
             p.background(220);
 
             // player 1
@@ -54,41 +57,30 @@ export default class Game extends React.Component{
             drawTargets(p, gs.Targets);
         }
 
-        // p.keyPressed = function() {
-        //     if (p.keyCode === 65 && !(Player1.x - PLAYER_SPEED <= 0)) {
-        //         Player1.x -= PLAYER_SPEED;
-        //     } else if (p.keyCode === 68 && !(Player1.x + PLAYER_SPEED >= CANVAS_WIDTH)) {
-        //         Player1.x += PLAYER_SPEED;
-        //     }
+        p.keyPressed = function() {
+            let input
+            switch (p.keyCode){
+                case 65:
+                    input = "move_left";
+                    break;
+                case 68:
+                    input = "move_right"
+                    break;
+                case 32:
+                    input = "launch_projectile"
+                    break;
+                default: null
+            }
 
-        //     if (p.keyCode === 74 && !(Player2.x - PLAYER_SPEED <= 0)) {
-        //         Player2.x -= PLAYER_SPEED;
-        //     } else if (p.keyCode === 76 && !(Player2.x + PLAYER_SPEED >= CANVAS_WIDTH)) {
-        //         Player2.x += PLAYER_SPEED;
-        //     }
+            if (input == null || gs == null) return
 
-        //     if (p.keyCode === 83){ // ATTACK!
-        //         let projectile = projectilePool.shift();
-        //         projectile.isEnabled = true;
-        //         projectile.x = Player1.x;
-        //         projectile.y = Player1.y;
-        //         projectile.velocity = -3;
+            socket.send(JSON.stringify({
+                MsgType: "input",
+                Input: input
+            }))
 
-        //         projectilePool.push(projectile)
-        //     }
-
-        //     if (p.keyCode === 75){ // ATTACK!
-        //         let projectile = projectilePool.shift();
-        //         projectile.isEnabled = true;
-        //         projectile.x = Player2.x;
-        //         projectile.y = Player2.y;
-        //         projectile.velocity = 3;
-
-        //         projectilePool.push(projectile)
-        //     }
-
-        //     return false
-        // }
+            input = null
+         }
     }
 
     componentDidMount() {
