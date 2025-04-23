@@ -34,7 +34,7 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 		playerNum:  0, // set to player 0 (will be updated if client joins another room)
 	}
 
-	defer closeClient(websocket, client)
+	defer closeClient(websocket, &client)
 
 	CLIENTS[client.connection] = &client // add client to CLIENTS map
 
@@ -132,7 +132,7 @@ func handleWrite(msgType int, msgStruct msgStruct, websocket *websocket.Conn) {
 	}
 }
 
-func closeClient(websocket *websocket.Conn, client Client) {
+func closeClient(websocket *websocket.Conn, client *Client) {
 	if client.roomID != "" {
 		curRoom := ROOMS[client.roomID]
 		// remove client from Room by setting it to an uninitialized Client struct
