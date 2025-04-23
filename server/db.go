@@ -8,6 +8,8 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
+var LEADERBOARD msgStruct // make leaderboard global
+
 // 'add_user' adds the given user to the leaderboard table in the given db.
 func add_user(username string, db *sql.DB) error {
 	add_user_sql := "INSERT INTO leaderboard (username, wins) VALUES ( ?, 0)"

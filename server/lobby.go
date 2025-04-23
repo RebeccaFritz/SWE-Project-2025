@@ -1,12 +1,17 @@
+// lobby.go handles lobby code creation, validation, and matchmaking between clients.
 package main
 
 import (
 	"log"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
+// maps lobby codes to clients
+var LOBBY = make(map[string]*Client)
+
+// createLobbyCode registers a new lobby code if it doesn't already exist;
+// otherwise, it notifies the client that the code is taken.
 func createLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
 	_, exists := LOBBY[LobbyCode] // Go idiom for checking for existence of a key in a map
 
@@ -23,10 +28,9 @@ func createLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
 	handleWrite(1, badMsg, wsConnection)
 }
 
-// this function handles incoming messages of the type "Lobby Code"
-// it (1) checks to see if the provided lobby code is correct,
-// (2a) if correct it places both the provided client and the client with the matching code in a new room
-// (2b) if wrong it send the client back an error message
+// matchLobbyCode handles "Lobby Code" messages by checking if the code matches an existing lobby.
+// If valid and not self-matching, it creates a new room and starts the game.
+// If invalid or self-matching, it sends an appropriate error message to the client.
 func matchLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
 	otherClient, otherClientExists := LOBBY[LobbyCode]
 	thisClient, thisClientExists := CLIENTS[wsConnection]
@@ -63,25 +67,4 @@ func matchLobbyCode(LobbyCode string, wsConnection *websocket.Conn) {
 		}
 		handleWrite(1, badMsg, wsConnection)
 	}
-}
-
-func NewRoom(client1 *Client, client2 *Client) *Room {
-	roomID := uuid.NewString() // generate unique string to id the room
-	room := Room{}
-
-	// place the clients in the room
-	room.clients[0] = client1
-	room.clients[1] = client2
-	// assign player1 and player2
-	room.clients[0].playerNum = 1
-	room.clients[1].playerNum = 2
-	// set default room values
-	room.clients[0].roomID = roomID
-	room.clients[1].roomID = roomID
-	room.gamestate = initGameState()
-	room.inputQueue = []string{}
-	// add room to the map
-	ROOMS[roomID] = &room
-
-	return &room
 }
