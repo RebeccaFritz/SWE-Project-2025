@@ -1,0 +1,13 @@
+.leaderboardCSS {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%
+}
+
+.buttonSetCSS {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%
+}

@@ -3,10 +3,10 @@ package main
 
 import (
 	"encoding/json"
-	"log"
-	"time"
-	"os"
 	"fmt"
+	"log"
+	"os"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -23,6 +23,7 @@ type msgStruct struct {
 	Gamestate   Gamestate
 	Input       string
 	LobbyCode   string // for lobby code creation or connection
+	Username    string
 }
 
 // a function that sends a message to a single client
@@ -100,6 +101,8 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 
 		// Go automatically dereferences pointers to structures when you access their fields (I was confused by this)
 		curRoom.inputQueue = append(curRoom.inputQueue, incomingMsg.Input)
+	case "create username":
+		CLIENTS[websocket].username = incomingMsg.Username
 	default:
 		log.Printf("Error: unknown message type '%s'", incomingMsg.MsgType)
 	}

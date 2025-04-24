@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 body{
-    background-color: #000;
+    background-color: #F8F7FF;
     color: white;
     text-align: center;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Press Start 2P", system-ui;
 }
 
 .game{
@@ -21,7 +23,7 @@ body{
 
 * {box-sizing: border-box;}
 
-header, article {background-color: goldenrod;}
+header, article {background-color: #1a3f70;}
 
 header{
     border: 1px solid black;
@@ -33,7 +35,7 @@ article{
     text-align: center;
     width: 20%;
     padding: 20px;
-    font-size: 25px;
+    font-size: 15px;
     border: 1px solid black;
     color: #fff;
     border-radius: 25px;
@@ -42,9 +44,9 @@ article{
 
 nav{
     float: right;
-    width: 25%;
+    width: 30%;
     padding: 20px;
-    margin: 0% 10% 0% 0%;
+    margin: 0% 0% 0% 0%;
 }
 
 section::after{
@@ -54,8 +56,9 @@ section::after{
 }
 
 table, th, td{
-    border: 1px solid goldenrod;
+    border: 1px solid #ffffff;
     border-collapse: collapse;
+    background: #1a3f70;
 }
 
 table{
@@ -68,6 +71,15 @@ th, td{
 
 input{
     padding: 2px;
+    margin: 5px;
+}
+
+td{
+    font-size: 12px;
+}
+
+button:hover{
+    background-color: #C3D9EA;
 }
 
 @media(max-width: 900px){
