@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 body{
-    background-color: #F8F7FF;
-    color: white;
+    background-color: #F5f3f4;
+    color: #F5f3f4;
     text-align: center;
     font-family: "Press Start 2P", system-ui;
 }
@@ -36,8 +36,8 @@ article{
     width: 20%;
     padding: 20px;
     font-size: 15px;
-    border: 1px solid black;
-    color: #fff;
+    border: 1px solid #1a3f70;
+    color: #F5f3f4;
     border-radius: 25px;
     margin: 0% 1.5%;
 }
@@ -56,7 +56,7 @@ section::after{
 }
 
 table, th, td{
-    border: 1px solid #ffffff;
+    border: 1px solid #F5f3f4;
     border-collapse: collapse;
     background: #1a3f70;
 }
@@ -70,7 +70,7 @@ th, td{
 }
 
 input{
-    padding: 2px;
+    padding: 4px;
     margin: 5px;
 }
 
@@ -80,6 +80,17 @@ td{
 
 button:hover{
     background-color: #C3D9EA;
+}
+
+button{
+    font-family: "Press Start 2P", system-ui;
+    font-size: x-small;
+}
+
+input{
+    width: 90%;
+    font-family: "Press Start 2P", system-ui;
+    font-size: x-small;
 }
 
 @media(max-width: 900px){

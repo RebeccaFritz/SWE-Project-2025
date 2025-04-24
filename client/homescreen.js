@@ -87,16 +87,16 @@ const Homescreen = (props) => {
     return(
         <div id = "strip">
             <header>
-                <h1>Bit Battle 1.0.0</h1>
+                <h1 className="headerAccent">Bit Battle 1.0.0</h1>
             </header>
             <br/>
             <div>
-                <div className="buttonSetCSS" >
+                <div className="buttonSet" >
+                    <Button value="Username"/>
                     <Button value="Start Game"/>
                     <Button value="Join Game"/>
-                    <Button value="Username"/>
                 </div>
-                <div className="leaderboardCSS" >
+                <div className="leaderboard" >
                     <Leaderboard leaderboard={props.leaderboard}/>
                 </div>
             </div>
