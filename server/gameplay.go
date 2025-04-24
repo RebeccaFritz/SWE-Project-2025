@@ -18,7 +18,7 @@ func runGameLoop(printDebug bool, room *Room) {
 		handleWrite(1, gamestateMsg, room.clients[1].connection)
 
 		// Clear the applied player input
-		room.inputQueue = []string{}
+		room.inputQueue = []InputQueueEntry{}
 
 		if printDebug {
 			log.Println("Gamestate")
@@ -32,7 +32,7 @@ func runGameLoop(printDebug bool, room *Room) {
 }
 
 // updateGameState adjusts the gamestate based on velocities and given player input
-func updateGameState(gs Gamestate, input_queue []string) Gamestate {
+func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 	gs.Player1, gs.Player2 = applyPlayerInputs(gs.Player1, gs.Player2, input_queue)
 	updateProjectilePositions(gs.Projectiles)
 	updateTargetsPositions(gs.Targets)
@@ -42,20 +42,21 @@ func updateGameState(gs Gamestate, input_queue []string) Gamestate {
 }
 
 // applyPlayerInput takes a input queue and applies it indiscriminately to the given players. see issue #85
-func applyPlayerInputs(p1 Player, p2 Player, input_queue []string) (Player, Player) {
+func applyPlayerInputs(p1 Player, p2 Player, input_queue []InputQueueEntry) (Player, Player) {
 	for i := range input_queue {
-		switch input_queue[i] {
-		case "move_left":
-			p1 = updatePlayerPosition(p1, input_queue[i])
-			p2 = updatePlayerPosition(p2, input_queue[i])
-		case "move_right":
-			p1 = updatePlayerPosition(p1, input_queue[i])
-			p2 = updatePlayerPosition(p2, input_queue[i])
+		switch input_queue[i].input {
+		case "move_left", "move_right":
+			if input_queue[i].player == 1{
+				p1 = updatePlayerPosition(p1, input_queue[i].input)
+			} else {
+				p2 = updatePlayerPosition(p2, input_queue[i].input)
+			}
 		case "launch_projectile":
 			log.Println("Handle launching projectiles / base conversions here!")
 		default:
-			log.Printf("Client Input Error: unknown input '%s'\n", input_queue[i])
+			log.Printf("Client Input Error: unknown input '%s'\n", input_queue[i].input)
 		}
+
 	}
 
 	return p1, p2

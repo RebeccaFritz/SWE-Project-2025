@@ -104,7 +104,7 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 			break
 		}
 
-		room.inputQueue = append(room.inputQueue, incomingMsg.Input)
+		room.inputQueue = append(room.inputQueue, InputQueueEntry{incomingMsg.Input, client.playerNum})
 	default:
 		log.Printf("Error: unknown message type '%s'", incomingMsg.MsgType)
 	}
