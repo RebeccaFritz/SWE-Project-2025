@@ -92,14 +92,19 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	case "status":
 		log.Println("Client Status: ", incomingMsg.Message)
 	case "input":
-		curRoom, exists := ROOMS[CLIENTS[websocket].roomID]
+		client, exists := CLIENTS[websocket]
+		if !exists {
+			log.Println("Error: Recieved game input from a socket, but the socket is not mapped to a client struct")
+			break
+		}
+
+		room, exists := ROOMS[client.roomID]
 		if !exists {
 			log.Println("Error: Client sent game input but is not in a room")
 			break
 		}
 
-		// Go automatically dereferences pointers to structures when you access their fields (I was confused by this)
-		curRoom.inputQueue = append(curRoom.inputQueue, incomingMsg.Input)
+		room.inputQueue = append(room.inputQueue, incomingMsg.Input)
 	default:
 		log.Printf("Error: unknown message type '%s'", incomingMsg.MsgType)
 	}
