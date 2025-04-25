@@ -4,8 +4,36 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"slices"
 	"time"
 )
+
+func deepCopyGamestate(gs Gamestate) Gamestate{
+	copy := Gamestate{
+		Player1:  gs.Player1,
+		Player2:  gs.Player2,
+		Projectiles: slices.Clone(gs.Projectiles),
+		Targets: slices.Clone(gs.Targets),
+	}
+
+	return copy
+}
+
+func reflectGamestate(oldGS Gamestate) Gamestate{
+	gs := deepCopyGamestate(oldGS)
+
+	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y
+
+	for j := range(gs.Projectiles){
+		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y
+	}
+
+	for j := range(gs.Targets){
+		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y
+	}
+
+	return gs
+}
 
 // runGameLoop updates the gamestate based on player input and writes it to the players in the room.
 // printDebug controls whether the gamestate is printed to the console
@@ -13,12 +41,14 @@ func runGameLoop(printDebug bool, room *Room) {
 	for range time.Tick(TICK_DURATION) {
 		room.gamestate = updateGameState(room.gamestate, room.inputQueue)
 
-		gamestateMsg := msgStruct{MsgType: "gamestate", Gamestate: room.gamestate}
-		handleWrite(1, gamestateMsg, room.clients[0].connection)
-		handleWrite(1, gamestateMsg, room.clients[1].connection)
+		msg := msgStruct{MsgType: "gamestate", Gamestate: room.gamestate}
+		handleWrite(1, msg, room.clients[0].connection)
+
+		msg = msgStruct{MsgType: "gamestate", Gamestate: reflectGamestate(room.gamestate)}
+		handleWrite(1, msg, room.clients[1].connection)
 
 		// Clear the applied player input
-		room.inputQueue = []string{}
+		room.inputQueue = []InputQueueEntry{}
 
 		if printDebug {
 			log.Println("Gamestate")
@@ -32,7 +62,9 @@ func runGameLoop(printDebug bool, room *Room) {
 }
 
 // updateGameState adjusts the gamestate based on velocities and given player input
-func updateGameState(gs Gamestate, input_queue []string) Gamestate {
+func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
+	gs = deepCopyGamestate(gs)
+
 	gs.Player1, gs.Player2 = applyPlayerInputs(gs.Player1, gs.Player2, input_queue)
 	updateProjectilePositions(gs.Projectiles)
 	updateTargetsPositions(gs.Targets)
@@ -42,20 +74,21 @@ func updateGameState(gs Gamestate, input_queue []string) Gamestate {
 }
 
 // applyPlayerInput takes a input queue and applies it indiscriminately to the given players. see issue #85
-func applyPlayerInputs(p1 Player, p2 Player, input_queue []string) (Player, Player) {
+func applyPlayerInputs(p1 Player, p2 Player, input_queue []InputQueueEntry) (Player, Player) {
 	for i := range input_queue {
-		switch input_queue[i] {
-		case "move_left":
-			p1 = updatePlayerPosition(p1, input_queue[i])
-			p2 = updatePlayerPosition(p2, input_queue[i])
-		case "move_right":
-			p1 = updatePlayerPosition(p1, input_queue[i])
-			p2 = updatePlayerPosition(p2, input_queue[i])
+		switch input_queue[i].input {
+		case "move_left", "move_right":
+			if input_queue[i].player == 1{
+				p1 = updatePlayerPosition(p1, input_queue[i].input)
+			} else {
+				p2 = updatePlayerPosition(p2, input_queue[i].input)
+			}
 		case "launch_projectile":
 			log.Println("Handle launching projectiles / base conversions here!")
 		default:
-			log.Printf("Client Input Error: unknown input '%s'\n", input_queue[i])
+			log.Printf("Client Input Error: unknown input '%s'\n", input_queue[i].input)
 		}
+
 	}
 
 	return p1, p2

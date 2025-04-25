@@ -46,11 +46,11 @@ export default class Game extends React.Component{
             p.background(220);
 
             // player 1
-            p.fill(0, 0 , 255);
+            p.fill(255, 0 , 0);
             p.circle(gs.Player1.X, gs.Player1.Y, 100);
 
             // player 2
-            p.fill(255, 0 , 0);
+            p.fill(0, 0 , 255);
             p.circle(gs.Player2.X, gs.Player2.Y, 100);
 
             drawProjectiles(p, gs.Projectiles);
