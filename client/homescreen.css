@@ -1,0 +1,17 @@
+.leaderboard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%
+}
+
+.buttonSet {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%
+}
+
+.headerAccent {
+    color: #ef9500;
+}

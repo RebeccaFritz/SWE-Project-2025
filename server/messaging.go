@@ -3,10 +3,10 @@ package main
 
 import (
 	"encoding/json"
-	"log"
-	"time"
-	"os"
 	"fmt"
+	"log"
+	"os"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -23,6 +23,7 @@ type msgStruct struct {
 	Gamestate   Gamestate
 	Input       string
 	LobbyCode   string // for lobby code creation or connection
+	Username    string
 }
 
 // a function that sends a message to a single client
@@ -105,6 +106,8 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 		}
 
 		room.inputQueue = append(room.inputQueue, InputQueueEntry{incomingMsg.Input, client.playerNum})
+	case "create username":
+		CLIENTS[websocket].username = incomingMsg.Username
 	default:
 		log.Printf("Error: unknown message type '%s'", incomingMsg.MsgType)
 	}

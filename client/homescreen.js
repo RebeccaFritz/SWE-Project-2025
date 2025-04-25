@@ -1,43 +1,48 @@
 import React from 'react'
+import './homescreen.css'
 
-// hiiiii
-
-var lobbyData = '';
+var msgData = '';
 var socket = null;
 
-// make the article component
-function MenuButton({value}){
+// make the Lobby Button component
+function Button({value}){
     function buttonClick(){
-        sendCode(value);
+        sendData(value);
     }
     function buttonInput(event) {
-        lobbyData = event.target.value;
+        msgData = event.target.value;
     }
     return(
         <article>
             {value}
-            <form name="Lobby" onChange={buttonInput}>
+            <form name={value} onChange={buttonInput}>
                 <input type="text" name="menuButton"/><br/>
-                <button type="button" onClick={buttonClick}>{value}</button>
+                <button type="button" onClick={buttonClick}>Submit</button>
             </form>
         </article>
     );
 }
 
-function sendCode(value){
+function sendData(value){
     if(value === "Start Game"){
         socket.send(JSON.stringify({
             MsgType: "create lobby code",
-            LobbyCode: lobbyData,
+            LobbyCode: msgData,
         }))
-    }
-    else if(value === "Join Game"){
+        console.log("Lobby code sent");
+    } else if(value === "Join Game"){
         socket.send(JSON.stringify({
             MsgType: "lobby code",
-            LobbyCode: lobbyData,
+            LobbyCode: msgData,
         }))
+        console.log("Lobby code sent");
+    } else if (value === "Username") {
+        socket.send(JSON.stringify({
+            MsgType: "create username",
+            Username: msgData,
+        }))
+        console.log("Username sent");
     }
-    console.log("Lobby code sent");
 }
 
 function leaderboardEntry(username, wins, i) {
@@ -77,36 +82,24 @@ function Leaderboard({leaderboard}){
     }
 }
 
-// Home Screen Component
-function renderHomescreen({leaderboard}){
-    return(
-        <div id = "strip">
-            <header>
-                <h1>Bit Battle 1.0.0</h1>
-            </header>
-            <br/>
-            <section>
-                <Leaderboard leaderboard={leaderboard}/>
-                <MenuButton value="Start Game"/>
-                <MenuButton value="Join Game"/>
-            </section>
-        </div>
-    );
-}
-
 const Homescreen = (props) => {
     socket = props.socket
     return(
         <div id = "strip">
             <header>
-                <h1>Bit Battle 1.0.0</h1>
+                <h1 className="headerAccent">Bit Battle 1.0.0</h1>
             </header>
             <br/>
-            <section>
-                <Leaderboard leaderboard={props.leaderboard}/>
-                <MenuButton value="Start Game"/>
-                <MenuButton value="Join Game"/>
-            </section>
+            <div>
+                <div className="buttonSet" >
+                    <Button value="Username"/>
+                    <Button value="Start Game"/>
+                    <Button value="Join Game"/>
+                </div>
+                <div className="leaderboard" >
+                    <Leaderboard leaderboard={props.leaderboard}/>
+                </div>
+            </div>
         </div>
     );
 }
