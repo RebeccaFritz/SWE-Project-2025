@@ -11,5 +11,6 @@ var CLIENTS = make(map[*websocket.Conn]*Client)
 type Client struct {
 	playerNum  int             // 1 or 2 (default 0)
 	roomID     string          // (default "")
+	username   string          // the client's username
 	connection *websocket.Conn // the websocket connection this client is on
 }
