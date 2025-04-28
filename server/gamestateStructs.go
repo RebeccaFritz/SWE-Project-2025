@@ -13,6 +13,7 @@ type Player struct {
 	Diameter int
 	Velocity int
 	Idx      int
+	Health   int
 }
 
 type Target struct {

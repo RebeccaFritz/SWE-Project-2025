@@ -30,7 +30,7 @@ type msgStruct struct {
 func handleMessaging(wsConnection *websocket.Conn) {
 
 	// according to Prof. Mirabelli, the ideal tick rates are sec/30, sec/60, and sec/120
-	for tick := range time.Tick(time.Second / 60) {
+	for tick := range time.Tick(TICK_DURATION) {
 		// the read waits until a message is recieved
 		msgType, message, err := handleRead(wsConnection)
 		if err != nil {

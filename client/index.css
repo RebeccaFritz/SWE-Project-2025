@@ -8,9 +8,9 @@ body{
 }
 
 .game{
-   position: absolute;
-   top: 400;
-   left: 500;
+   position: fixed;
+   top: 15%;
+   left: 32%;
 }
 
 #strip{
