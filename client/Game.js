@@ -35,6 +35,14 @@ function drawHeart(p, x, y, health) {
     p.text(health, x+20, y+15);
 }
 
+function YdependentHeart(p, playerY, health) {
+    if (playerY > (canvasHeight / 2)) {
+        drawHeart(p, canvasHeight+35, playerY-25, health) // draw a heart on top of screen
+    } else {
+        drawHeart(p, canvasHeight+35, playerY+25, health) // draw on bottom of screen
+    }
+}
+
 const canvasWidth = 500
 const canvasHeight = 400
 let socket
@@ -73,8 +81,9 @@ export default class Game extends React.Component{
 
             drawProjectiles(p, gs.Projectiles);
             drawTargets(p, gs.Targets);
-            drawHeart(p, canvasHeight+35, 35, gs.Player1.Health) // draw a heart for Player1
-            drawHeart(p, canvasHeight+35, canvasHeight-35, gs.Player2.Health) // draw a heart for Player2
+
+            YdependentHeart(p, gs.Player1.Y, gs.Player1.Health)
+            YdependentHeart(p ,gs.Player2.Y, gs.Player2.Health)
         }
 
         p.keyPressed = function() {
