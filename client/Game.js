@@ -19,11 +19,18 @@ function drawProjectiles(p, projectiles){
     }
 }
 
-function drawHeart(p, x, y, health) {
+function drawHeart(p, x, playerY, health) {
     // arc parameters: x center, y center, width, height, start, stop, mode, detail
     // start and stop are the angles between which to draw the arc, arcs are drawn clockwise from start
     // angles are given in radians
     // mode is optional. determines the arc's fill style 
+
+    let y
+    if (playerY > (canvasHeight /2)) {
+        y = playerY-25
+    } else {
+        y = playerY+25
+    }
 
     p.noStroke();
     p.fill(239, 149, 0);
@@ -33,14 +40,6 @@ function drawHeart(p, x, y, health) {
     health.toString();
     p.textSize(32);
     p.text(health, x+20, y+15);
-}
-
-function YdependentHeart(p, playerY, health) {
-    if (playerY > (canvasHeight / 2)) {
-        drawHeart(p, canvasHeight+35, playerY-25, health) // draw a heart on top of screen
-    } else {
-        drawHeart(p, canvasHeight+35, playerY+25, health) // draw on bottom of screen
-    }
 }
 
 const canvasWidth = 500
@@ -82,8 +81,8 @@ export default class Game extends React.Component{
             drawProjectiles(p, gs.Projectiles);
             drawTargets(p, gs.Targets);
 
-            YdependentHeart(p, gs.Player1.Y, gs.Player1.Health)
-            YdependentHeart(p ,gs.Player2.Y, gs.Player2.Health)
+            drawHeart(p, canvasHeight+35, gs.Player1.Y, gs.Player1.Health)
+            drawHeart(p, canvasHeight+35, gs.Player2.Y, gs.Player2.Health)
         }
 
         p.keyPressed = function() {
