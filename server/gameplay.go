@@ -8,27 +8,27 @@ import (
 	"time"
 )
 
-func deepCopyGamestate(gs Gamestate) Gamestate{
+func deepCopyGamestate(gs Gamestate) Gamestate {
 	copy := Gamestate{
-		Player1:  gs.Player1,
-		Player2:  gs.Player2,
+		Player1:     gs.Player1,
+		Player2:     gs.Player2,
 		Projectiles: slices.Clone(gs.Projectiles),
-		Targets: slices.Clone(gs.Targets),
+		Targets:     slices.Clone(gs.Targets),
 	}
 
 	return copy
 }
 
-func reflectGamestate(oldGS Gamestate) Gamestate{
+func reflectGamestate(oldGS Gamestate) Gamestate {
 	gs := deepCopyGamestate(oldGS)
 
 	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y
 
-	for j := range(gs.Projectiles){
+	for j := range gs.Projectiles {
 		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y
 	}
 
-	for j := range(gs.Targets){
+	for j := range gs.Targets {
 		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y
 	}
 
@@ -69,6 +69,7 @@ func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 	updateProjectilePositions(gs.Projectiles)
 	updateTargetsPositions(gs.Targets)
 	handleProjectileTargetCollisions(gs.Projectiles, gs.Targets)
+	gs.Player1.Health, gs.Player2.Health = handleTargetPlayerCollisions(gs.Targets, gs.Player1, gs.Player2)
 
 	return gs
 }
@@ -78,7 +79,7 @@ func applyPlayerInputs(p1 Player, p2 Player, input_queue []InputQueueEntry) (Pla
 	for i := range input_queue {
 		switch input_queue[i].input {
 		case "move_left", "move_right":
-			if input_queue[i].player == 1{
+			if input_queue[i].player == 1 {
 				p1 = updatePlayerPosition(p1, input_queue[i].input)
 			} else {
 				p2 = updatePlayerPosition(p2, input_queue[i].input)
@@ -155,6 +156,39 @@ func isColliding(target Target, projectile Projectile) bool {
 		return true
 	}
 	return false
+}
+
+// handleProjectilePlayerCollisions updates any projectiles and players that are in collision conditions
+func handleTargetPlayerCollisions(targets []Target, player1 Player, player2 Player) (int, int) {
+	for i := range targets {
+		if !targets[i].IsEnabled {
+			continue
+		}
+
+		didReach, p1Health, p2Health := reachedOpponent(targets[i], player1, player2)
+		player1.Health = p1Health
+		player2.Health = p2Health
+
+		if didReach {
+			targets[i].IsEnabled = false
+			targets[i].Velocity = 0
+		}
+	}
+
+	return player1.Health, player2.Health
+}
+
+// reachedOpponent returns wheater the given target reached the opponent's collision zone
+func reachedOpponent(target Target, player1 Player, player2 Player) (bool, int, int) {
+
+	if (target.Y + target.Diameter) >= (CANVAS_HEIGHT - COLLISION_ZONE) {
+		player1.Health -= 1
+		return true, player1.Health, player2.Health
+	} else if (target.Y - target.Diameter) <= COLLISION_ZONE {
+		player2.Health -= 1
+		return true, player1.Health, player2.Health
+	}
+	return false, player1.Health, player2.Health
 }
 
 func distance(x1 int, y1 int, x2 int, y2 int) int {
