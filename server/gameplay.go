@@ -71,6 +71,10 @@ func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 	handleProjectileTargetCollisions(gs.Projectiles, gs.Targets)
 	gs.Player1.Health, gs.Player2.Health = handleTargetPlayerCollisions(gs.Targets, gs.Player1, gs.Player2)
 
+	if gs.Player1.Health <= 0 || gs.Player2.Health <= 0 {
+		gs.Gameover = true
+	}
+
 	return gs
 }
 
