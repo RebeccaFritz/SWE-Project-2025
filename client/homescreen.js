@@ -47,9 +47,9 @@ function sendData(value){
 
 function leaderboardEntry(username, wins, i) {
     return (
-        <tr>
-            <td>{username}</td>
-            <td>{wins}</td>
+        <tr key={i+20}>
+            <td key={i}>{username}</td>
+            <td key={i+10}>{wins}</td>
         </tr>
     )
 }
