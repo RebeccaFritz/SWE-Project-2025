@@ -19,6 +19,31 @@ function drawProjectiles(p, projectiles){
     }
 }
 
+function drawHeart(p, x, playerY, health) {
+    // arc parameters: x center, y center, width, height, start, stop, mode, detail
+    // start and stop are the angles between which to draw the arc, arcs are drawn clockwise from start
+    // angles are given in radians
+    // mode is optional. determines the arc's fill style 
+
+    let y
+    if (playerY > (canvasHeight /2)) {
+        y = playerY-25
+    } else {
+        y = playerY+25
+    }
+
+    p.noStroke();
+    p.fill(239, 149, 0);
+    p.arc(x, y, x-(x+15), 40, p.PI, 0); // top r
+    p.arc(x-15, y, x-(x+15), 40, p.PI, 0); // top l
+    p.triangle(x-23, y, x+7, y, x-7, y+25); // bottom
+    health.toString();
+    p.textSize(32);
+    p.text(health, x+20, y+15);
+}
+
+const canvasWidth = 500
+const canvasHeight = 400
 let socket
 let gs
 
@@ -30,7 +55,7 @@ export default class Game extends React.Component{
 
     Sketch = (p) => {
         p.setup = () => {
-            p.createCanvas(400, 400);
+            p.createCanvas(canvasWidth, canvasHeight);
         }
 
         p.draw = () => {
@@ -55,6 +80,9 @@ export default class Game extends React.Component{
 
             drawProjectiles(p, gs.Projectiles);
             drawTargets(p, gs.Targets);
+
+            drawHeart(p, canvasHeight+35, gs.Player1.Y, gs.Player1.Health)
+            drawHeart(p, canvasHeight+35, gs.Player2.Y, gs.Player2.Health)
         }
 
         p.keyPressed = function() {

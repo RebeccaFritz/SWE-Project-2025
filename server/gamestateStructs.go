@@ -5,6 +5,7 @@ type Gamestate struct {
 	Player2     Player
 	Targets     []Target
 	Projectiles []Projectile
+	Gameover    bool
 }
 
 type Player struct {
@@ -13,6 +14,7 @@ type Player struct {
 	Diameter int
 	Velocity int
 	Idx      int
+	Health   int
 }
 
 type Target struct {
