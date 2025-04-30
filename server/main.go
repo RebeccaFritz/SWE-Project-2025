@@ -18,7 +18,7 @@ func main() {
 	}
 	defer DB.Close()
 
-	//create_table(db) // uncomment this if you have never built the app before
+	create_table(db) // uncomment this if you have never built the app before
 
 	// test calls
 	// add_user("Amoniker", db)
