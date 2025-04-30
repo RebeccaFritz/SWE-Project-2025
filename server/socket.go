@@ -41,7 +41,7 @@ func closeClient(websocket *websocket.Conn, client *Client) {
 	if client.roomID != "" {
 		curRoom := ROOMS[client.roomID]
 		// remove client from Room by setting it to an uninitialized Client struct
-		curRoom.clients[client.playerNum] = &Client{}
+		curRoom.clients[client.playerNum-1] = &Client{}
 	}
 	websocket.Close()
 }

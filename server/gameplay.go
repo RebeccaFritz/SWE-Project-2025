@@ -5,7 +5,6 @@ import (
 	"log"
 	"math"
 	"slices"
-	"strconv"
 	"time"
 )
 
@@ -84,7 +83,8 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 			} else {
 				gs.Player2 = updatePlayerPosition(gs.Player2, input_queue[i].input)
 			}
-		case "launch_projectile":
+		// case "launch_projectile":
+		default:
 			if input_queue[i].player == 1 {
 				target := gs.Targets[i]
 				for j := 0; j < len(gs.Targets); j++ {
@@ -93,7 +93,7 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 					}
 				}
 				if doHexConversion(input_queue[i].input, target) {
-					projectile := Projectile{gs.Player1.X, gs.Player1.Y, 10, 2, true, 0.5}
+					projectile := Projectile{gs.Player1.X, gs.Player1.Y, 10, 1, true, 1}
 					gs.Projectiles = append(gs.Projectiles, projectile)
 				}
 			} else {
@@ -104,12 +104,10 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 					}
 				}
 				if doHexConversion(input_queue[i].input, target) {
-					projectile := Projectile{gs.Player2.X, gs.Player2.Y, 10, 2, true, 0.5}
+					projectile := Projectile{gs.Player2.X, gs.Player2.Y, 10, 1, true, 1}
 					gs.Projectiles = append(gs.Projectiles, projectile)
 				}
 			}
-		default:
-			log.Printf("Client Input Error: unknown input '%s'\n", input_queue[i].input)
 		}
 	}
 	return gs
@@ -118,9 +116,10 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 // doHexConversion handles the game's hex->bin conversion mechanic to determine
 // whether a projectile should be launched
 func doHexConversion(input string, target Target) bool {
-	convert := target.Convert // Will need some kind of actual random number generation here
-	binary := strconv.FormatInt(int64(convert), 2)
-	// hex := fmt.Sprintf("%x", convert)
+	log.Println("Input is:", input)
+	convert := target.Convert
+	binary := fmt.Sprintf("%08b", convert)
+	log.Println("Target is:", binary)
 	if input == binary {
 		return true
 	}

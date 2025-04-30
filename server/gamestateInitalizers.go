@@ -1,6 +1,8 @@
 package main
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 // initGameState initializes a gamestate struct
 func initGameState() Gamestate {
@@ -8,7 +10,7 @@ func initGameState() Gamestate {
 		Player1:     initPlayer(1),
 		Player2:     initPlayer(2),
 		Targets:     initTargets(),
-		Projectiles: initProjectiles(),
+		Projectiles: []Projectile{},
 	}
 
 	return gs
@@ -33,9 +35,10 @@ func initTargets() []Target {
 	return targets
 }
 
-func initProjectiles() []Projectile {
+/* func initProjectiles() []Projectile {
 	p1 := Projectile{350, 350, 10, 0, true, 0.5}
 	p2 := Projectile{300, 300, 10, 0, true, 0.5}
 	projectiles := []Projectile{p1, p2}
 	return projectiles
 }
+*/
