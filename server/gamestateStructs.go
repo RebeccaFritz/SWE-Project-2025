@@ -21,6 +21,7 @@ type Target struct {
 	Diameter  int
 	Velocity  int
 	IsEnabled bool
+	Convert   int
 }
 
 type Projectile struct {

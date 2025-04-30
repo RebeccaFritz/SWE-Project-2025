@@ -5,30 +5,31 @@ import (
 	"log"
 	"math"
 	"slices"
+	"strconv"
 	"time"
 )
 
-func deepCopyGamestate(gs Gamestate) Gamestate{
+func deepCopyGamestate(gs Gamestate) Gamestate {
 	copy := Gamestate{
-		Player1:  gs.Player1,
-		Player2:  gs.Player2,
+		Player1:     gs.Player1,
+		Player2:     gs.Player2,
 		Projectiles: slices.Clone(gs.Projectiles),
-		Targets: slices.Clone(gs.Targets),
+		Targets:     slices.Clone(gs.Targets),
 	}
 
 	return copy
 }
 
-func reflectGamestate(oldGS Gamestate) Gamestate{
+func reflectGamestate(oldGS Gamestate) Gamestate {
 	gs := deepCopyGamestate(oldGS)
 
 	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y
 
-	for j := range(gs.Projectiles){
+	for j := range gs.Projectiles {
 		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y
 	}
 
-	for j := range(gs.Targets){
+	for j := range gs.Targets {
 		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y
 	}
 
@@ -65,7 +66,7 @@ func runGameLoop(printDebug bool, room *Room) {
 func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 	gs = deepCopyGamestate(gs)
 
-	gs.Player1, gs.Player2 = applyPlayerInputs(gs.Player1, gs.Player2, input_queue)
+	gs = applyPlayerInputs(deepCopyGamestate(gs), input_queue)
 	updateProjectilePositions(gs.Projectiles)
 	updateTargetsPositions(gs.Targets)
 	handleProjectileTargetCollisions(gs.Projectiles, gs.Targets)
@@ -74,24 +75,56 @@ func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 }
 
 // applyPlayerInput takes a input queue and applies it indiscriminately to the given players. see issue #85
-func applyPlayerInputs(p1 Player, p2 Player, input_queue []InputQueueEntry) (Player, Player) {
+func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 	for i := range input_queue {
 		switch input_queue[i].input {
 		case "move_left", "move_right":
-			if input_queue[i].player == 1{
-				p1 = updatePlayerPosition(p1, input_queue[i].input)
+			if input_queue[i].player == 1 {
+				gs.Player1 = updatePlayerPosition(gs.Player1, input_queue[i].input)
 			} else {
-				p2 = updatePlayerPosition(p2, input_queue[i].input)
+				gs.Player2 = updatePlayerPosition(gs.Player2, input_queue[i].input)
 			}
 		case "launch_projectile":
-			log.Println("Handle launching projectiles / base conversions here!")
+			if input_queue[i].player == 1 {
+				target := gs.Targets[i]
+				for j := 0; j < len(gs.Targets); j++ {
+					if gs.Targets[j].X == gs.Player1.X {
+						target = gs.Targets[j]
+					}
+				}
+				if doHexConversion(input_queue[i].input, target) {
+					projectile := Projectile{gs.Player1.X, gs.Player1.Y, 10, 2, true, 0.5}
+					gs.Projectiles = append(gs.Projectiles, projectile)
+				}
+			} else {
+				target := gs.Targets[i]
+				for j := 0; j < len(gs.Targets); j++ {
+					if gs.Targets[j].X == gs.Player2.X {
+						target = gs.Targets[j]
+					}
+				}
+				if doHexConversion(input_queue[i].input, target) {
+					projectile := Projectile{gs.Player2.X, gs.Player2.Y, 10, 2, true, 0.5}
+					gs.Projectiles = append(gs.Projectiles, projectile)
+				}
+			}
 		default:
 			log.Printf("Client Input Error: unknown input '%s'\n", input_queue[i].input)
 		}
-
 	}
+	return gs
+}
 
-	return p1, p2
+// doHexConversion handles the game's hex->bin conversion mechanic to determine
+// whether a projectile should be launched
+func doHexConversion(input string, target Target) bool {
+	convert := target.Convert // Will need some kind of actual random number generation here
+	binary := strconv.FormatInt(int64(convert), 2)
+	// hex := fmt.Sprintf("%x", convert)
+	if input == binary {
+		return true
+	}
+	return false
 }
 
 // updatePlayerPosition moves the given player the given direction based on the global PLAYER_MOVE_LENGTH

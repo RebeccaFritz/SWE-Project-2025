@@ -1,5 +1,7 @@
 package main
 
+import "math/rand"
+
 // initGameState initializes a gamestate struct
 func initGameState() Gamestate {
 	gs := Gamestate{
@@ -26,7 +28,7 @@ func initTargets() []Target {
 	targets := []Target{}
 
 	for i := PLAYER_MOVE_LENGTH; i < CANVAS_WIDTH; i += PLAYER_MOVE_LENGTH {
-		targets = append(targets, Target{X: i, Y: CANVAS_HEIGHT / 2, Velocity: 0, Diameter: 10, IsEnabled: true})
+		targets = append(targets, Target{X: i, Y: CANVAS_HEIGHT / 2, Velocity: 0, Diameter: 10, IsEnabled: true, Convert: rand.Intn(100)})
 	}
 	return targets
 }
