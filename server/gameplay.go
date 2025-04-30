@@ -4,35 +4,44 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"slices"
 	"time"
 )
 
-func deepCopyGamestate(gs Gamestate) Gamestate {
-	copy := Gamestate{
-		Player1:     gs.Player1,
-		Player2:     gs.Player2,
-		Projectiles: slices.Clone(gs.Projectiles),
-		Targets:     slices.Clone(gs.Targets),
-	}
-
-	return copy
-}
 
 func reflectGamestate(oldGS Gamestate) Gamestate {
 	gs := deepCopyGamestate(oldGS)
 
-	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y
+	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y                             // vertical reflection
+	gs.Player1.X, gs.Player2.X = CANVAS_HEIGHT-gs.Player1.X, CANVAS_HEIGHT-gs.Player2.X // horizontal reflection
 
 	for j := range gs.Projectiles {
-		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y
+		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y // vertical reflection
+		gs.Projectiles[j].X = CANVAS_HEIGHT - gs.Projectiles[j].X // horizontal reflection
 	}
 
 	for j := range gs.Targets {
-		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y
+		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y // vertical reflection
+		gs.Targets[j].X = CANVAS_HEIGHT - gs.Targets[j].X // horizontal reflection
 	}
 
 	return gs
+}
+
+// updateLeaderboard
+func updateLeaderboard(gs Gamestate, room *Room){
+	switch {
+	case gs.Player1.Health <= 0:
+		if room.clients[1].username != ""{
+			add_user(room.clients[1].username, DB)
+			increment_wins(room.clients[1].username, DB)
+		}
+	case gs.Player2.Health <= 0:
+		if room.clients[0].username != ""{
+			add_user(room.clients[0].username, DB)
+			increment_wins(room.clients[0].username, DB)
+		}
+
+	}
 }
 
 // runGameLoop updates the gamestate based on player input and writes it to the players in the room.
@@ -50,6 +59,16 @@ func runGameLoop(printDebug bool, room *Room) {
 		// Clear the applied player input
 		room.inputQueue = []InputQueueEntry{}
 
+
+		if room.gamestate.Gameover {
+			updateLeaderboard(deepCopyGamestate(room.gamestate), room)
+			LEADERBOARD = getLeaderboard(DB)
+
+			handleWrite(1, LEADERBOARD, room.clients[0].connection)
+			handleWrite(1, LEADERBOARD, room.clients[1].connection)
+			break
+		}
+
 		if printDebug {
 			log.Println("Gamestate")
 			fmt.Printf("Projectiles: %+v\n", room.gamestate.Projectiles)
@@ -59,6 +78,9 @@ func runGameLoop(printDebug bool, room *Room) {
 			fmt.Printf("Player 2: %+v\n\n", room.gamestate.Player2)
 		}
 	}
+
+	delete(ROOMS, room.clients[0].roomID)
+	log.Println("Room closed")
 }
 
 // updateGameState adjusts the gamestate based on velocities and given player input
@@ -69,6 +91,11 @@ func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 	updateProjectilePositions(gs.Projectiles)
 	updateTargetsPositions(gs.Targets)
 	handleProjectileTargetCollisions(gs.Projectiles, gs.Targets)
+	gs.Player1.Health, gs.Player2.Health = handleTargetPlayerCollisions(gs.Targets, gs.Player1, gs.Player2)
+
+	if gs.Player1.Health <= 0 || gs.Player2.Health <= 0 {
+		gs.Gameover = true
+	}
 
 	return gs
 }
@@ -79,9 +106,9 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 		switch input_queue[i].input {
 		case "move_left", "move_right":
 			if input_queue[i].player == 1 {
-				gs.Player1 = updatePlayerPosition(gs.Player1, input_queue[i].input)
+				gs.Player1 = updatePlayerPosition(gs.Player1, input_queue[i].input, false)
 			} else {
-				gs.Player2 = updatePlayerPosition(gs.Player2, input_queue[i].input)
+				gs.Player2 = updatePlayerPosition(gs.Player2, input_queue[i].input, true)
 			}
 		// case "launch_projectile":
 		default:
@@ -127,11 +154,16 @@ func doHexConversion(input string, target Target) bool {
 }
 
 // updatePlayerPosition moves the given player the given direction based on the global PLAYER_MOVE_LENGTH
-func updatePlayerPosition(p Player, direction string) Player {
+func updatePlayerPosition(p Player, direction string, isPlayer2 bool) Player {
+	var P2mult int = 1
+	if isPlayer2 {
+		P2mult = -1
+	}
+
 	if direction == "move_right" {
-		p.X += PLAYER_MOVE_LENGTH
+		p.X += PLAYER_MOVE_LENGTH * P2mult
 	} else if direction == "move_left" {
-		p.X -= PLAYER_MOVE_LENGTH
+		p.X -= PLAYER_MOVE_LENGTH * P2mult
 	} else {
 		log.Printf("Error: invalid move direction '%s'\n", direction)
 	}
@@ -187,6 +219,39 @@ func isColliding(target Target, projectile Projectile) bool {
 		return true
 	}
 	return false
+}
+
+// handleProjectilePlayerCollisions updates any projectiles and players that are in collision conditions
+func handleTargetPlayerCollisions(targets []Target, player1 Player, player2 Player) (int, int) {
+	for i := range targets {
+		if !targets[i].IsEnabled {
+			continue
+		}
+
+		didReach, p1Health, p2Health := reachedOpponent(targets[i], player1, player2)
+		player1.Health = p1Health
+		player2.Health = p2Health
+
+		if didReach {
+			targets[i].IsEnabled = false
+			targets[i].Velocity = 0
+		}
+	}
+
+	return player1.Health, player2.Health
+}
+
+// reachedOpponent returns wheater the given target reached the opponent's collision zone
+func reachedOpponent(target Target, player1 Player, player2 Player) (bool, int, int) {
+
+	if (target.Y + target.Diameter) >= (CANVAS_HEIGHT - COLLISION_ZONE) {
+		player1.Health -= 1
+		return true, player1.Health, player2.Health
+	} else if (target.Y - target.Diameter) <= COLLISION_ZONE {
+		player2.Health -= 1
+		return true, player1.Health, player2.Health
+	}
+	return false, player1.Health, player2.Health
 }
 
 func distance(x1 int, y1 int, x2 int, y2 int) int {

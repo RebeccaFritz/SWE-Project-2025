@@ -10,12 +10,13 @@ import (
 
 func main() {
 	db, err := connect_db("../data/db.sqlite")
+	DB = db
 
 	if err != nil {
 		fmt.Print(err)
 		return
 	}
-	defer db.Close()
+	defer DB.Close()
 
 	//create_table(db) // uncomment this if you have never built the app before
 
@@ -26,7 +27,7 @@ func main() {
 	// increment_wins("Amoniker", db)
 
 	// get leaderboard data from SQL database
-	LEADERBOARD = getLeaderboard(db)
+	LEADERBOARD = getLeaderboard(DB)
 
 	os.Create("../server/server-messages.txt") // create a file to recieve incoming messages to the server
 	http.HandleFunc("/ws", wsHandler)

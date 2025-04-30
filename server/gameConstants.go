@@ -11,3 +11,4 @@ const CANVAS_WIDTH = 400
 const CANVAS_HEIGHT = 400
 const PLAYER_MOVE_LENGTH = 50
 const TICK_DURATION = time.Second / 60
+const COLLISION_ZONE = 50 // this is equal to the radius of the player token

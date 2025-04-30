@@ -64,11 +64,19 @@ export default function App() {
         };
     }, []);
 
+    let zStyle
+
+    if (gameState == null || gameState.Gameover === true) {
+        zStyle = { zIndex: -1 };
+    } else {
+        zStyle = { zIndex: 2 };
+    }
+
     return (
         // display the client UI
         <div>
             <HomeScreen socket={ws} leaderboard={leaderboard} />
-            <div className="game" >
+            <div className="game" style={zStyle}>
                <Game gameState={gameState} socket={ws}/>
             </div>
         </div>
