@@ -9,6 +9,7 @@ import (
 )
 
 var LEADERBOARD msgStruct // make leaderboard global
+var DB *sql.DB
 
 // 'add_user' adds the given user to the leaderboard table in the given db.
 func add_user(username string, db *sql.DB) error {

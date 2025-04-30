@@ -66,7 +66,7 @@ export default function App() {
 
     let zStyle
 
-    if (gameState == null) {
+    if (gameState == null || gameState.Gameover === true) {
         zStyle = { zIndex: -1 };
     } else {
         zStyle = { zIndex: 2 };

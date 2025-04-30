@@ -23,7 +23,7 @@ function drawHeart(p, x, playerY, health) {
     // arc parameters: x center, y center, width, height, start, stop, mode, detail
     // start and stop are the angles between which to draw the arc, arcs are drawn clockwise from start
     // angles are given in radians
-    // mode is optional. determines the arc's fill style 
+    // mode is optional. determines the arc's fill style
 
     let y
     if (playerY > (canvasHeight /2)) {
@@ -61,9 +61,16 @@ export default class Game extends React.Component{
         p.draw = () => {
            socket = this.props.socket
            gs = this.props.gameState
+
            if (gs == null) {
               console.log("No gamestate to render")
               return
+           }
+
+           if (gs.Gameover == true) {
+               console.log("Game Over.")
+               p.clear()
+               return
            }
 
           // console.log("recieved", this.props.gameState)

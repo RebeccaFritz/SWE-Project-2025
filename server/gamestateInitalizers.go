@@ -7,6 +7,7 @@ func initGameState() Gamestate {
 		Player2:     initPlayer(2),
 		Targets:     initTargets(),
 		Projectiles: initProjectiles(),
+		Gameover: 	 false,
 	}
 
 	return gs
@@ -26,7 +27,7 @@ func initTargets() []Target {
 	targets := []Target{}
 
 	for i := PLAYER_MOVE_LENGTH; i < CANVAS_WIDTH; i += PLAYER_MOVE_LENGTH {
-		targets = append(targets, Target{X: i, Y: CANVAS_HEIGHT / 2, Velocity: 0, Diameter: 10, IsEnabled: true})
+		targets = append(targets, Target{X: i, Y: CANVAS_HEIGHT / 2, Velocity: 2, Diameter: 10, IsEnabled: true})
 	}
 	return targets
 }
