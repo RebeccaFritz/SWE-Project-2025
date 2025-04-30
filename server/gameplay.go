@@ -11,14 +11,17 @@ import (
 func reflectGamestate(oldGS Gamestate) Gamestate {
 	gs := deepCopyGamestate(oldGS)
 
-	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y
+	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y                             // vertical reflection
+	gs.Player1.X, gs.Player2.X = CANVAS_HEIGHT-gs.Player1.X, CANVAS_HEIGHT-gs.Player2.X // horizontal reflection
 
 	for j := range gs.Projectiles {
-		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y
+		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y // vertical reflection
+		gs.Projectiles[j].X = CANVAS_HEIGHT - gs.Projectiles[j].X // horizontal reflection
 	}
 
 	for j := range gs.Targets {
-		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y
+		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y // vertical reflection
+		gs.Targets[j].X = CANVAS_HEIGHT - gs.Targets[j].X // horizontal reflection
 	}
 
 	return gs
@@ -103,9 +106,9 @@ func applyPlayerInputs(p1 Player, p2 Player, input_queue []InputQueueEntry) (Pla
 		switch input_queue[i].input {
 		case "move_left", "move_right":
 			if input_queue[i].player == 1 {
-				p1 = updatePlayerPosition(p1, input_queue[i].input)
+				p1 = updatePlayerPosition(p1, input_queue[i].input, false)
 			} else {
-				p2 = updatePlayerPosition(p2, input_queue[i].input)
+				p2 = updatePlayerPosition(p2, input_queue[i].input, true)
 			}
 		case "launch_projectile":
 			log.Println("Handle launching projectiles / base conversions here!")
@@ -119,11 +122,16 @@ func applyPlayerInputs(p1 Player, p2 Player, input_queue []InputQueueEntry) (Pla
 }
 
 // updatePlayerPosition moves the given player the given direction based on the global PLAYER_MOVE_LENGTH
-func updatePlayerPosition(p Player, direction string) Player {
+func updatePlayerPosition(p Player, direction string, isPlayer2 bool) Player {
+	var P2mult int = 1
+	if isPlayer2 {
+		P2mult = -1
+	}
+
 	if direction == "move_right" {
-		p.X += PLAYER_MOVE_LENGTH
+		p.X += PLAYER_MOVE_LENGTH * P2mult
 	} else if direction == "move_left" {
-		p.X -= PLAYER_MOVE_LENGTH
+		p.X -= PLAYER_MOVE_LENGTH * P2mult
 	} else {
 		log.Printf("Error: invalid move direction '%s'\n", direction)
 	}
