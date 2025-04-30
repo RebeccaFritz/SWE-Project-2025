@@ -22,14 +22,17 @@ func deepCopyGamestate(gs Gamestate) Gamestate {
 func reflectGamestate(oldGS Gamestate) Gamestate {
 	gs := deepCopyGamestate(oldGS)
 
-	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y
+	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y                             // vertical reflection
+	gs.Player1.X, gs.Player2.X = CANVAS_HEIGHT-gs.Player1.X, CANVAS_HEIGHT-gs.Player2.X // horizontal reflection
 
 	for j := range gs.Projectiles {
-		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y
+		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y // vertical reflection
+		gs.Projectiles[j].X = CANVAS_HEIGHT - gs.Projectiles[j].X // horizontal reflection
 	}
 
 	for j := range gs.Targets {
-		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y
+		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y // vertical reflection
+		gs.Targets[j].X = CANVAS_HEIGHT - gs.Targets[j].X // horizontal reflection
 	}
 
 	return gs
