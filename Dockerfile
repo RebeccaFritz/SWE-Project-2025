@@ -1,8 +1,8 @@
-# Dockerfile
-FROM golang:1.21
+FROM golang:1.24
 
 WORKDIR /app
 COPY server/ .
+COPY data/ ../data/
 
 RUN go build -o server .
 
