@@ -87,7 +87,7 @@ func runGameLoop(printDebug bool, room *Room) {
 func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 	gs = deepCopyGamestate(gs)
 
-	gs.Player1, gs.Player2 = applyPlayerInputs(gs.Player1, gs.Player2, input_queue)
+	gs = applyPlayerInputs(deepCopyGamestate(gs), input_queue)
 	updateProjectilePositions(gs.Projectiles)
 	updateTargetsPositions(gs.Targets)
 	handleProjectileTargetCollisions(gs.Projectiles, gs.Targets)
@@ -101,24 +101,56 @@ func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 }
 
 // applyPlayerInput takes a input queue and applies it indiscriminately to the given players. see issue #85
-func applyPlayerInputs(p1 Player, p2 Player, input_queue []InputQueueEntry) (Player, Player) {
+func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 	for i := range input_queue {
 		switch input_queue[i].input {
 		case "move_left", "move_right":
 			if input_queue[i].player == 1 {
-				p1 = updatePlayerPosition(p1, input_queue[i].input, false)
+				gs.Player1 = updatePlayerPosition(gs.Player1, input_queue[i].input, false)
 			} else {
-				p2 = updatePlayerPosition(p2, input_queue[i].input, true)
+				gs.Player2 = updatePlayerPosition(gs.Player2, input_queue[i].input, true)
 			}
-		case "launch_projectile":
-			log.Println("Handle launching projectiles / base conversions here!")
+		// case "launch_projectile":
 		default:
-			log.Printf("Client Input Error: unknown input '%s'\n", input_queue[i].input)
+			if input_queue[i].player == 1 {
+				target := gs.Targets[i]
+				for j := 0; j < len(gs.Targets); j++ {
+					if gs.Targets[j].X == gs.Player1.X {
+						target = gs.Targets[j]
+					}
+				}
+				if doHexConversion(input_queue[i].input, target) {
+					projectile := Projectile{gs.Player1.X, gs.Player1.Y, 10, 1, true, 1}
+					gs.Projectiles = append(gs.Projectiles, projectile)
+				}
+			} else {
+				target := gs.Targets[i]
+				for j := 0; j < len(gs.Targets); j++ {
+					if gs.Targets[j].X == gs.Player2.X {
+						target = gs.Targets[j]
+					}
+				}
+				if doHexConversion(input_queue[i].input, target) {
+					projectile := Projectile{gs.Player2.X, gs.Player2.Y, 10, 1, true, 1}
+					gs.Projectiles = append(gs.Projectiles, projectile)
+				}
+			}
 		}
-
 	}
+	return gs
+}
 
-	return p1, p2
+// doHexConversion handles the game's hex->bin conversion mechanic to determine
+// whether a projectile should be launched
+func doHexConversion(input string, target Target) bool {
+	log.Println("Input is:", input)
+	convert := target.Convert
+	binary := fmt.Sprintf("%08b", convert)
+	log.Println("Target is:", binary)
+	if input == binary {
+		return true
+	}
+	return false
 }
 
 // updatePlayerPosition moves the given player the given direction based on the global PLAYER_MOVE_LENGTH

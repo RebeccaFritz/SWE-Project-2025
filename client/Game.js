@@ -6,9 +6,12 @@ function drawObj(p, obj){
 }
 
 function drawTargets(p, targets){
-    p.fill(0, 255, 0);
+    p.fill(0, 0, 0);
     for (let i = 0; i < targets.length; i++){
-       if (targets[i].IsEnabled) drawObj(p, targets[i]);
+       if (targets[i].IsEnabled){
+        drawObj(p, targets[i]);
+        p.text("0x" + targets[i].Convert.toString(16), targets[i].X - 5, targets[i].Y - 8);
+       }
     }
 }
 
@@ -46,6 +49,7 @@ const canvasWidth = 500
 const canvasHeight = 400
 let socket
 let gs
+let number = [0, 0, 0, 0, 0, 0, 0, 0]
 
 export default class Game extends React.Component{
     constructor(props) {
@@ -76,6 +80,7 @@ export default class Game extends React.Component{
           // console.log("recieved", this.props.gameState)
 
             p.background(220);
+            p.text(number.join(''), 100, 100);
 
             // player 1
             p.fill(255, 0 , 0);
@@ -93,7 +98,7 @@ export default class Game extends React.Component{
         }
 
         p.keyPressed = function() {
-            let input
+            let input;
             switch (p.keyCode){
                 case 65:
                     input = "move_left";
@@ -101,8 +106,73 @@ export default class Game extends React.Component{
                 case 68:
                     input = "move_right"
                     break;
+                case 49:
+                    if(number[0] == "0"){
+                        number[0] = "1"
+                    }
+                    else if(number[0] == "1"){
+                        number[0] = "0"
+                    }
+                    break;
+                case 50:
+                    if(number[1] == "0"){
+                        number[1] = "1"
+                    }
+                    else if(number[1] == "1"){
+                        number[1] = "0"
+                    }
+                    break;
+                case 51:
+                    if(number[2] == "0"){
+                        number[2] = "1"
+                    }
+                    else if(number[2] == "1"){
+                        number[2] = "0"
+                    }
+                    break;
+                case 52:
+                    if(number[3] == "0"){
+                        number[3] = "1"
+                    }
+                    else if(number[3] == "1"){
+                        number[3] = "0"
+                    }
+                    break;
+                case 53:
+                    if(number[4] == "0"){
+                        number[4] = "1"
+                    }
+                    else if(number[4] == "1"){
+                        number[4] = "0"
+                    }
+                    break;
+                case 54:
+                    if(number[5] == "0"){
+                        number[5] = "1"
+                    }
+                    else if(number[5] == "1"){
+                        number[5] = "0"
+                    }
+                    break;
+                case 55:
+                    if(number[6] == "0"){
+                        number[6] = "1"
+                    }
+                    else if(number[6] == "1"){
+                        number[6] = "0"
+                    }
+                    break;
+                case 56:
+                    if(number[7] == "0"){
+                        number[7] = "1"
+                    }
+                    else if(number[7] == "1"){
+                        number[7] = "0"
+                    }
+                    break;
                 case 32:
-                    input = "launch_projectile"
+                    input = number.join('')
+                    console.log(input)
                     break;
                 default: null
             }
@@ -113,9 +183,8 @@ export default class Game extends React.Component{
                 MsgType: "input",
                 Input: input
             }))
-
             input = null
-         }
+        }
     }
 
     componentDidMount() {
