@@ -4,20 +4,9 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"slices"
 	"time"
 )
 
-func deepCopyGamestate(gs Gamestate) Gamestate {
-	copy := Gamestate{
-		Player1:     gs.Player1,
-		Player2:     gs.Player2,
-		Projectiles: slices.Clone(gs.Projectiles),
-		Targets:     slices.Clone(gs.Targets),
-	}
-
-	return copy
-}
 
 func reflectGamestate(oldGS Gamestate) Gamestate {
 	gs := deepCopyGamestate(oldGS)
@@ -35,6 +24,23 @@ func reflectGamestate(oldGS Gamestate) Gamestate {
 	return gs
 }
 
+// updateLeaderboard
+func updateLeaderboard(gs Gamestate, room *Room){
+	switch {
+	case gs.Player1.Health <= 0:
+		if room.clients[1].username != ""{
+			add_user(room.clients[1].username, DB)
+			increment_wins(room.clients[1].username, DB)
+		}
+	case gs.Player2.Health <= 0:
+		if room.clients[0].username != ""{
+			add_user(room.clients[0].username, DB)
+			increment_wins(room.clients[0].username, DB)
+		}
+
+	}
+}
+
 // runGameLoop updates the gamestate based on player input and writes it to the players in the room.
 // printDebug controls whether the gamestate is printed to the console
 func runGameLoop(printDebug bool, room *Room) {
@@ -50,6 +56,16 @@ func runGameLoop(printDebug bool, room *Room) {
 		// Clear the applied player input
 		room.inputQueue = []InputQueueEntry{}
 
+
+		if room.gamestate.Gameover {
+			updateLeaderboard(deepCopyGamestate(room.gamestate), room)
+			LEADERBOARD = getLeaderboard(DB)
+
+			handleWrite(1, LEADERBOARD, room.clients[0].connection)
+			handleWrite(1, LEADERBOARD, room.clients[1].connection)
+			break
+		}
+
 		if printDebug {
 			log.Println("Gamestate")
 			fmt.Printf("Projectiles: %+v\n", room.gamestate.Projectiles)
@@ -59,6 +75,9 @@ func runGameLoop(printDebug bool, room *Room) {
 			fmt.Printf("Player 2: %+v\n\n", room.gamestate.Player2)
 		}
 	}
+
+	delete(ROOMS, room.clients[0].roomID)
+	log.Println("Room closed")
 }
 
 // updateGameState adjusts the gamestate based on velocities and given player input
