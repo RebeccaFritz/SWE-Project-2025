@@ -154,29 +154,25 @@ func doHexConversion(input string, target Target) bool {
 // updatePlayerPosition moves the given player the given direction based on the global PLAYER_MOVE_LENGTH
 func updatePlayerPosition(p Player, direction string, isPlayer2 bool) Player {
 	var P2mult int = 1
+	var rightSide, leftSide int
 	if isPlayer2 {
 		P2mult = -1
+		leftSide = CANVAS_HEIGHT - (p.X + p.Diameter/2)  // reverse horizontal reflections
+		rightSide = CANVAS_HEIGHT - (p.X - p.Diameter/2) // reverse horizontal reflections
+	} else {
+		leftSide = (p.X - p.Diameter/2)
+		rightSide = (p.X + p.Diameter/2)
 	}
 
-	rightSide := CANVAS_HEIGHT - (p.X - p.Diameter/2) // reverse horizontal reflections
-	leftSide := CANVAS_HEIGHT - (p.X + p.Diameter/2)  // reverse horizontal reflections
 	fmt.Println("move: (direction, p.X, p.left, p.right)", direction, p.X, leftSide, rightSide)
 
-	if direction == "move_right" && rightSide < CANVAS_WIDTH {
-		p.X += PLAYER_MOVE_LENGTH * P2mult
-	} else if direction == "move_left" && leftSide > 0 {
+	if direction == "move_left" && leftSide > 0 {
 		p.X -= PLAYER_MOVE_LENGTH * P2mult
+	} else if direction == "move_right" && rightSide < CANVAS_WIDTH {
+		p.X += PLAYER_MOVE_LENGTH * P2mult
 	} else {
 		log.Printf("Error: invalid move direction '%s'\n", direction)
 	}
-
-	// if direction == "move_right" {
-	// 	p.X += PLAYER_MOVE_LENGTH * P2mult
-	// } else if direction == "move_left" {
-	// 	p.X -= PLAYER_MOVE_LENGTH * P2mult
-	// } else {
-	// 	log.Printf("Error: invalid move direction '%s'\n", direction)
-	// }
 
 	return p
 }
