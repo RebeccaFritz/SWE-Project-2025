@@ -10,7 +10,8 @@ export default function App() {
 
     useEffect(() => {
         // create WebSocket at the server port
-        const socket = new WebSocket('ws://localhost:8080/ws');
+        // const socket = new WebSocket('ws://localhost:8080/ws');
+        const socket = new WebSocket("wss://hexapong.fly.dev/ws");
         setWS(socket);
 
         // open WebSocket

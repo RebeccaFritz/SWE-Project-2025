@@ -120,7 +120,7 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 					}
 				}
 				if doHexConversion(input_queue[i].input, target) {
-					projectile := Projectile{gs.Player1.X, gs.Player1.Y, 10, 1, true, 1}
+					projectile := Projectile{gs.Player1.X, gs.Player1.Y, 10, -1, true, 1}
 					gs.Projectiles = append(gs.Projectiles, projectile)
 				}
 			} else {

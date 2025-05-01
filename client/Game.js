@@ -80,6 +80,7 @@ export default class Game extends React.Component{
           // console.log("recieved", this.props.gameState)
 
             p.background(220);
+            p.textSize(10);
             p.text(number.join(''), 100, 100);
 
             // player 1
