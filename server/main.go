@@ -29,7 +29,7 @@ func main() {
 	// get leaderboard data from SQL database
 	LEADERBOARD = getLeaderboard(DB)
 
-	http.Handle("/", http.FileServer(http.Dir("./dist")))
+	http.Handle("/", http.FileServer(http.Dir("./client/dist")))
 	os.Create("../server/server-messages.txt") // create a file to recieve incoming messages to the server
 	http.HandleFunc("/ws", wsHandler)
 	fmt.Println("WebSocket server started on :8080")
