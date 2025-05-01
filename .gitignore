@@ -76,12 +76,14 @@ db.sqlite
 .vscode/*
 !.vscode/extensions.json
 coverage/
+dist/
 
 lib/
 logs/
 node_modules/
 parcel-bundle-reports/
 tmp
+
 
 /target/
 
