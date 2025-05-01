@@ -17,7 +17,7 @@ function drawTargets(p, targets){
 }
 
 function drawProjectiles(p, projectiles){
-    p.fill(0, 100, 0);
+    p.fill(41, 191, 18);
     for (let i = 0; i < projectiles.length; i++){
         if(projectiles[i].IsEnabled) drawObj(p, projectiles[i]);
     }

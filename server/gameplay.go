@@ -118,7 +118,7 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 					}
 				}
 				if doHexConversion(input_queue[i].input, target) {
-					projectile := Projectile{gs.Player1.X, gs.Player1.Y, 10, -1, true, 1}
+					projectile := Projectile{gs.Player1.X, CANVAS_HEIGHT - 60, 10, -2, true, 1} // 60 pixels is the height of the player token showing in the Y direction
 					gs.Projectiles = append(gs.Projectiles, projectile)
 				}
 			} else {
@@ -129,7 +129,7 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 					}
 				}
 				if doHexConversion(input_queue[i].input, target) {
-					projectile := Projectile{gs.Player2.X, gs.Player2.Y, 10, 1, true, 1}
+					projectile := Projectile{gs.Player2.X, 60, 10, 2, true, 1}
 					gs.Projectiles = append(gs.Projectiles, projectile)
 				}
 			}
