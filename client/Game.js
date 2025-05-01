@@ -10,6 +10,7 @@ function drawTargets(p, targets){
     for (let i = 0; i < targets.length; i++){
        if (targets[i].IsEnabled){
         drawObj(p, targets[i]);
+        p.textSize(14);
         p.text("0x" + targets[i].Convert.toString(16), targets[i].X - 5, targets[i].Y - 8);
        }
     }
@@ -80,8 +81,8 @@ export default class Game extends React.Component{
           // console.log("recieved", this.props.gameState)
 
             p.background(220);
-            p.textSize(10);
-            p.text(number.join(''), 100, 100);
+            p.textSize(18);
+            p.text(number.join(''), 410, 210);
 
             // player 1
             p.fill(255, 0 , 0);
@@ -104,9 +105,11 @@ export default class Game extends React.Component{
             switch (p.keyCode){
                 case 65:
                     input = "move_left";
+                    number = [0, 0, 0, 0, 0, 0, 0, 0];
                     break;
                 case 68:
                     input = "move_right"
+                    number = [0, 0, 0, 0, 0, 0, 0, 0];
                     break;
                 case 49:
                     if(number[0] == "0"){

@@ -164,7 +164,7 @@ func updatePlayerPosition(p Player, direction string, isPlayer2 bool) Player {
 		rightSide = (p.X + p.Diameter/2)
 	}
 
-	fmt.Println("move: (direction, p.X, p.left, p.right)", direction, p.X, leftSide, rightSide)
+	//fmt.Println("move: (direction, p.X, p.left, p.right)", direction, p.X, leftSide, rightSide)
 
 	if direction == "move_left" && leftSide > 0 {
 		p.X -= PLAYER_MOVE_LENGTH * P2mult
