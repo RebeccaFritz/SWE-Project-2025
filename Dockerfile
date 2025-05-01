@@ -3,7 +3,7 @@ FROM golang:1.24
 WORKDIR /app
 COPY server/ .
 COPY data/ ../data/
-COPY ../client/dist/ ./dist
+COPY client/dist/ ./dist
 
 RUN go build -o server .
 
