@@ -7,7 +7,6 @@ import (
 	"time"
 )
 
-
 func reflectGamestate(oldGS Gamestate) Gamestate {
 	gs := deepCopyGamestate(oldGS)
 
@@ -28,15 +27,15 @@ func reflectGamestate(oldGS Gamestate) Gamestate {
 }
 
 // updateLeaderboard
-func updateLeaderboard(gs Gamestate, room *Room){
+func updateLeaderboard(gs Gamestate, room *Room) {
 	switch {
 	case gs.Player1.Health <= 0:
-		if room.clients[1].username != ""{
+		if room.clients[1].username != "" {
 			add_user(room.clients[1].username, DB)
 			increment_wins(room.clients[1].username, DB)
 		}
 	case gs.Player2.Health <= 0:
-		if room.clients[0].username != ""{
+		if room.clients[0].username != "" {
 			add_user(room.clients[0].username, DB)
 			increment_wins(room.clients[0].username, DB)
 		}
@@ -58,7 +57,6 @@ func runGameLoop(printDebug bool, room *Room) {
 
 		// Clear the applied player input
 		room.inputQueue = []InputQueueEntry{}
-
 
 		if room.gamestate.Gameover {
 			updateLeaderboard(deepCopyGamestate(room.gamestate), room)
@@ -120,7 +118,7 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 					}
 				}
 				if doHexConversion(input_queue[i].input, target) {
-					projectile := Projectile{gs.Player1.X, gs.Player1.Y, 10, 1, true, 1}
+					projectile := Projectile{gs.Player1.X, gs.Player1.Y, 10, -1, true, 1}
 					gs.Projectiles = append(gs.Projectiles, projectile)
 				}
 			} else {
@@ -160,13 +158,25 @@ func updatePlayerPosition(p Player, direction string, isPlayer2 bool) Player {
 		P2mult = -1
 	}
 
-	if direction == "move_right" {
+	rightSide := CANVAS_HEIGHT - (p.X - p.Diameter/2) // reverse horizontal reflections
+	leftSide := CANVAS_HEIGHT - (p.X + p.Diameter/2)  // reverse horizontal reflections
+	fmt.Println("move: (direction, p.X, p.left, p.right)", direction, p.X, leftSide, rightSide)
+
+	if direction == "move_right" && rightSide < CANVAS_WIDTH {
 		p.X += PLAYER_MOVE_LENGTH * P2mult
-	} else if direction == "move_left" {
+	} else if direction == "move_left" && leftSide > 0 {
 		p.X -= PLAYER_MOVE_LENGTH * P2mult
 	} else {
 		log.Printf("Error: invalid move direction '%s'\n", direction)
 	}
+
+	// if direction == "move_right" {
+	// 	p.X += PLAYER_MOVE_LENGTH * P2mult
+	// } else if direction == "move_left" {
+	// 	p.X -= PLAYER_MOVE_LENGTH * P2mult
+	// } else {
+	// 	log.Printf("Error: invalid move direction '%s'\n", direction)
+	// }
 
 	return p
 }

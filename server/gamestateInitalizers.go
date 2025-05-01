@@ -11,7 +11,7 @@ func initGameState() Gamestate {
 		Player2:     initPlayer(2),
 		Targets:     initTargets(),
 		Projectiles: []Projectile{},
-		Gameover: 	 false,
+		Gameover:    false,
 	}
 
 	return gs
@@ -20,10 +20,10 @@ func initGameState() Gamestate {
 // initPlayer creates a blank player
 func initPlayer(idx int) Player {
 	if idx == 1 {
-		return Player{X: 200, Y: 390, Diameter: 0, Velocity: 0, Idx: idx, Health: 5}
+		return Player{X: 200, Y: 390, Diameter: 100, Velocity: 0, Idx: idx, Health: 5}
 	}
 
-	return Player{X: 200, Y: 10, Diameter: 0, Velocity: 0, Idx: idx, Health: 5}
+	return Player{X: 200, Y: 10, Diameter: 100, Velocity: 0, Idx: idx, Health: 5}
 }
 
 // initTargets creates the targets
