@@ -7,7 +7,6 @@ import (
 	"time"
 )
 
-
 func reflectGamestate(oldGS Gamestate) Gamestate {
 	gs := deepCopyGamestate(oldGS)
 
@@ -28,15 +27,15 @@ func reflectGamestate(oldGS Gamestate) Gamestate {
 }
 
 // updateLeaderboard
-func updateLeaderboard(gs Gamestate, room *Room){
+func updateLeaderboard(gs Gamestate, room *Room) {
 	switch {
 	case gs.Player1.Health <= 0:
-		if room.clients[1].username != ""{
+		if room.clients[1].username != "" {
 			add_user(room.clients[1].username, DB)
 			increment_wins(room.clients[1].username, DB)
 		}
 	case gs.Player2.Health <= 0:
-		if room.clients[0].username != ""{
+		if room.clients[0].username != "" {
 			add_user(room.clients[0].username, DB)
 			increment_wins(room.clients[0].username, DB)
 		}
@@ -58,7 +57,6 @@ func runGameLoop(printDebug bool, room *Room) {
 
 		// Clear the applied player input
 		room.inputQueue = []InputQueueEntry{}
-
 
 		if room.gamestate.Gameover {
 			updateLeaderboard(deepCopyGamestate(room.gamestate), room)
@@ -120,7 +118,8 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 					}
 				}
 				if doHexConversion(input_queue[i].input, target) {
-					projectile := Projectile{gs.Player1.X, gs.Player1.Y, 10, -1, true, 1}
+
+					projectile := Projectile{gs.Player1.X, CANVAS_HEIGHT - 60, 10, -2, true, 1} // 60 pixels is the height of the player token showing in the Y direction
 					gs.Projectiles = append(gs.Projectiles, projectile)
 				}
 			} else {
@@ -131,7 +130,7 @@ func applyPlayerInputs(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 					}
 				}
 				if doHexConversion(input_queue[i].input, target) {
-					projectile := Projectile{gs.Player2.X, gs.Player2.Y, 10, 1, true, 1}
+					projectile := Projectile{gs.Player2.X, 60, 10, 2, true, 1}
 					gs.Projectiles = append(gs.Projectiles, projectile)
 				}
 			}
@@ -156,14 +155,22 @@ func doHexConversion(input string, target Target) bool {
 // updatePlayerPosition moves the given player the given direction based on the global PLAYER_MOVE_LENGTH
 func updatePlayerPosition(p Player, direction string, isPlayer2 bool) Player {
 	var P2mult int = 1
+	var rightSide, leftSide int
 	if isPlayer2 {
 		P2mult = -1
+		leftSide = CANVAS_HEIGHT - (p.X + p.Diameter/2)  // reverse horizontal reflections
+		rightSide = CANVAS_HEIGHT - (p.X - p.Diameter/2) // reverse horizontal reflections
+	} else {
+		leftSide = (p.X - p.Diameter/2)
+		rightSide = (p.X + p.Diameter/2)
 	}
 
-	if direction == "move_right" {
-		p.X += PLAYER_MOVE_LENGTH * P2mult
-	} else if direction == "move_left" {
+	//fmt.Println("move: (direction, p.X, p.left, p.right)", direction, p.X, leftSide, rightSide)
+
+	if direction == "move_left" && leftSide > 0 {
 		p.X -= PLAYER_MOVE_LENGTH * P2mult
+	} else if direction == "move_right" && rightSide < CANVAS_WIDTH {
+		p.X += PLAYER_MOVE_LENGTH * P2mult
 	} else {
 		log.Printf("Error: invalid move direction '%s'\n", direction)
 	}
