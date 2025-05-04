@@ -11,16 +11,16 @@ func reflectGamestate(oldGS Gamestate) Gamestate {
 	gs := deepCopyGamestate(oldGS)
 
 	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y                             // vertical reflection
-	gs.Player1.X, gs.Player2.X = CANVAS_HEIGHT-gs.Player1.X, CANVAS_HEIGHT-gs.Player2.X // horizontal reflection
+	gs.Player1.X, gs.Player2.X = CANVAS_WIDTH-gs.Player1.X, CANVAS_WIDTH-gs.Player2.X // horizontal reflection
 
 	for j := range gs.Projectiles {
 		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y // vertical reflection
-		gs.Projectiles[j].X = CANVAS_HEIGHT - gs.Projectiles[j].X // horizontal reflection
+		gs.Projectiles[j].X = CANVAS_WIDTH - gs.Projectiles[j].X // horizontal reflection
 	}
 
 	for j := range gs.Targets {
 		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y // vertical reflection
-		gs.Targets[j].X = CANVAS_HEIGHT - gs.Targets[j].X // horizontal reflection
+		gs.Targets[j].X = CANVAS_WIDTH - gs.Targets[j].X // horizontal reflection
 	}
 
 	return gs
@@ -157,8 +157,8 @@ func updatePlayerPosition(p Player, direction string, isPlayer2 bool) Player {
 	var rightSide, leftSide int
 	if isPlayer2 {
 		P2mult = -1
-		leftSide = CANVAS_HEIGHT - (p.X + p.Diameter/2)  // reverse horizontal reflections
-		rightSide = CANVAS_HEIGHT - (p.X - p.Diameter/2) // reverse horizontal reflections
+		leftSide = CANVAS_WIDTH - (p.X + p.Diameter/2)  // reverse horizontal reflections
+		rightSide = CANVAS_WIDTH - (p.X - p.Diameter/2) // reverse horizontal reflections
 	} else {
 		leftSide = (p.X - p.Diameter/2)
 		rightSide = (p.X + p.Diameter/2)

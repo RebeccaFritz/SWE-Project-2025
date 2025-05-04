@@ -19,11 +19,27 @@ func initGameState() Gamestate {
 
 // initPlayer creates a blank player
 func initPlayer(idx int) Player {
+	Diameter := 100
+
 	if idx == 1 {
-		return Player{X: 200, Y: 390, Diameter: 100, Velocity: 0, Idx: idx, Health: 5}
+		return Player{
+			X: CANVAS_WIDTH / 2,
+			Y: CANVAS_HEIGHT - Diameter /2,
+			Diameter: Diameter,
+			Velocity: 0,
+			Idx: idx,
+			Health: 5,
+		}
 	}
 
-	return Player{X: 200, Y: 10, Diameter: 100, Velocity: 0, Idx: idx, Health: 5}
+	return Player{
+		X: CANVAS_WIDTH / 2,
+		Y: Diameter / 2,
+		Diameter: Diameter,
+		Velocity: 0,
+		Idx: idx,
+		Health: 5,
+	}
 }
 
 // initTargets creates the targets
