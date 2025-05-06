@@ -1,26 +1,37 @@
 import React from 'react'
 import p5 from 'p5';
+import pixelfont from 'url:./PressStart2P-Regular.ttf'
 
 function drawObj(p, obj){
    p.circle(obj.X, obj.Y, obj.Diameter)
 }
 
 function drawTargets(p, targets){
-    p.fill(0, 0, 0);
+    p.fill(255, 255, 255);
     for (let i = 0; i < targets.length; i++){
        if (targets[i].IsEnabled){
-        drawObj(p, targets[i]);
+        p.fill(0)
+        p.circle(targets[i].X, targets[i].Y, targets[i].Diameter + 25)
+        p.fill(255)
         p.textSize(14);
-        p.text("0x" + targets[i].Convert.toString(16), targets[i].X - 5, targets[i].Y - 8);
+        let hex = "0x" + targets[i].Convert.toString(16)
+        p.text(hex , targets[i].X -  p.textWidth(hex)/2 , targets[i].Y + 5);
        }
     }
 }
 
 function drawProjectiles(p, projectiles){
-    p.fill(41, 191, 18);
+    p.stroke(0)
+    p.strokeWeight(10)
+    p.fill(255);
     for (let i = 0; i < projectiles.length; i++){
-        if(projectiles[i].IsEnabled) drawObj(p, projectiles[i]);
+        if(projectiles[i].IsEnabled) {
+            p.ellipse(projectiles[i].X + p.random(-5, 5), projectiles[i].Y + p.random(-5, 5), 20, 20);
+            p.ellipse(projectiles[i].X + p.random(-5, 5), projectiles[i].Y + p.random(-5, 5), 20, 20);
+            p.ellipse(projectiles[i].X + p.random(-5, 5), projectiles[i].Y + p.random(-5, 5), 20, 20);
+        }
     }
+    p.noStroke()
 }
 
 function drawHeart(p, x, playerY, health) {
@@ -33,24 +44,29 @@ function drawHeart(p, x, playerY, health) {
     if (playerY > (canvasHeight /2)) {
         y = playerY-25
     } else {
-        y = playerY+25
+        y = playerY - 15
     }
-
+    let size = 50
     p.noStroke();
-    p.fill(239, 149, 0);
-    p.arc(x, y, x-(x+15), 40, p.PI, 0); // top r
-    p.arc(x-15, y, x-(x+15), 40, p.PI, 0); // top l
-    p.triangle(x-23, y, x+7, y, x-7, y+25); // bottom
+    p.fill(0)
+    p.beginShape();
+    p.vertex(x, y);
+    p.bezierVertex(x - size / 2, y - size / 2, x - size, y + size / 3, x, y + size);
+    p.bezierVertex(x + size, y + size / 3, x + size / 2, y - size / 2, x, y);
+    p.endShape();
     health.toString();
+    p.fill(255)
     p.textSize(32);
-    p.text(health, x+20, y+15);
+    p.text(health, x- 9, y + 32);
 }
 
+
 const canvasWidth = 500
-const canvasHeight = 400
+const canvasHeight = 600
 let socket
 let gs
 let number = [0, 0, 0, 0, 0, 0, 0, 0]
+let font
 
 export default class Game extends React.Component{
     constructor(props) {
@@ -59,6 +75,10 @@ export default class Game extends React.Component{
     }
 
     Sketch = (p) => {
+        p.preload = () => {
+            font = p.loadFont(pixelfont)
+        }
+
         p.setup = () => {
             p.createCanvas(canvasWidth, canvasHeight);
         }
@@ -79,25 +99,39 @@ export default class Game extends React.Component{
            }
 
           // console.log("recieved", this.props.gameState)
+            p.textFont('Futura');
+            p.background(255);
+            p.fill(255)
+            p.rect(canvasWidth - 100, 0, 100, canvasHeight)
 
-            p.background(220);
+            p.stroke(0, 0, 0);
+            p.strokeWeight(10); // Thick outline
+            p.noFill()
+            p.rect(0, 0, canvasWidth, canvasHeight); // Draw a rectangle
+
+            p.stroke(0, 0, 0);
+            p.strokeWeight(5);
+            p.line(canvasWidth - 100, 0, canvasWidth-100, canvasHeight)
+
+            // conversion
+            p.fill(255)
             p.textSize(18);
-            p.text(number.join(''), 410, 210);
+            p.text(number.join(''), 405, canvasHeight/2);
 
             // player 1
-            p.fill(255, 0 , 0);
-            p.circle(gs.Player1.X, gs.Player1.Y, 100);
+            p.fill(0);
+            p.circle(gs.Player1.X, gs.Player1.Y, gs.Player1.Diameter / 2);
 
             // player 2
-            p.fill(0, 0 , 255);
-            p.circle(gs.Player2.X, gs.Player2.Y, 100);
+            p.fill(255);
+            p.circle(gs.Player2.X, gs.Player2.Y, gs.Player2.Diameter/ 2);
 
+            drawHeart(p, canvasWidth+ 47 - 100, gs.Player1.Y, gs.Player1.Health)
+            drawHeart(p, canvasWidth+ 47 - 100, gs.Player2.Y, gs.Player2.Health)
 
             drawProjectiles(p, gs.Projectiles);
             drawTargets(p, gs.Targets);
 
-            drawHeart(p, canvasHeight+35, gs.Player1.Y, gs.Player1.Health)
-            drawHeart(p, canvasHeight+35, gs.Player2.Y, gs.Player2.Health)
         }
 
         p.keyPressed = function() {
@@ -177,6 +211,7 @@ export default class Game extends React.Component{
                     break;
                 case 32:
                     input = number.join('')
+                    number = [0,0,0,0,0,0,0,0,]
                     console.log(input)
                     break;
                 default: null
