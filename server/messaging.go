@@ -7,8 +7,6 @@ import (
 	"log"
 	"os"
 	"time"
-
-	"github.com/gorilla/websocket"
 )
 
 // this struct temporarily stores incoming message data before it is validated (if it starts with an uppercase letter it can be exported by Marshal())
@@ -27,12 +25,12 @@ type msgStruct struct {
 }
 
 // a function that sends a message to a single client
-func handleMessaging(wsConnection *websocket.Conn) {
+func handleMessaging(s *socket) {
 
 	// according to Prof. Mirabelli, the ideal tick rates are sec/30, sec/60, and sec/120
 	for tick := range time.Tick(TICK_DURATION) {
 		// the read waits until a message is recieved
-		msgType, message, err := handleRead(wsConnection)
+		msgType, message, err := handleRead(s)
 		if err != nil {
 			log.Println("Error reading message:", err)
 			break
@@ -40,25 +38,32 @@ func handleMessaging(wsConnection *websocket.Conn) {
 
 		message.CurTick = tick
 
-		handleWrite(msgType, message, wsConnection) // echo back message
+		handleWrite(msgType, message, s) // echo back message
 	}
 }
 
 // handleWrite writes a message to a client
-func handleWrite(msgType int, msgStruct msgStruct, websocket *websocket.Conn) {
+func handleWrite(msgType int, msgStruct msgStruct, s *socket) {
 	message, err := json.Marshal(msgStruct)
 	if err != nil {
 		log.Println("Error Marshaling message:", err)
 	}
-	err = websocket.WriteMessage(msgType, message)
+
+	s.Lock()
+	defer s.Unlock()
+	err = s.websocket.WriteMessage(msgType, message)
+
 	if err != nil {
 		log.Println("Error writing message:", err)
 	}
 }
 
 // handleRead reads an incoming JSON message from a client and parses it
-func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
-	msgType, message, err := websocket.ReadMessage()
+func handleRead(s *socket) (int, msgStruct, error) {
+	// s.Lock()
+	// defer s.Unlock()
+	msgType, message, err := s.websocket.ReadMessage()
+
 	if err != nil {
 		return msgType, msgStruct{}, err
 	}
@@ -68,7 +73,7 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 	if err != nil {
 		log.Println(err)
 	}
-	clientName := "Client, Local Address: " + websocket.LocalAddr().String() + ", Remote Address: " + websocket.RemoteAddr().String()
+	clientName := "Client, Local Address: " + s.websocket.LocalAddr().String() + ", Remote Address: " + s.websocket.RemoteAddr().String()
 	date := "Date: " + time.Now().String()
 	received := "Received: " + string(message)
 	space := " "
@@ -85,15 +90,15 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 
 	switch incomingMsg.MsgType {
 	case "create lobby code":
-		createLobbyCode(incomingMsg.LobbyCode, websocket)
+		createLobbyCode(incomingMsg.LobbyCode, s)
 	case "lobby code":
-		matchLobbyCode(incomingMsg.LobbyCode, websocket)
+		matchLobbyCode(incomingMsg.LobbyCode, s)
 	case "test":
 		log.Println("Test msg: ", incomingMsg.Message)
 	case "status":
 		log.Println("Client Status: ", incomingMsg.Message)
 	case "input":
-		client, exists := CLIENTS[websocket]
+		client, exists := CLIENTS[s.websocket]
 		if !exists {
 			log.Println("Error: Recieved game input from a socket, but the socket is not mapped to a client struct")
 			break
@@ -107,7 +112,7 @@ func handleRead(websocket *websocket.Conn) (int, msgStruct, error) {
 
 		room.inputQueue = append(room.inputQueue, InputQueueEntry{incomingMsg.Input, client.playerNum})
 	case "create username":
-		CLIENTS[websocket].username = incomingMsg.Username
+		CLIENTS[s.websocket].username = incomingMsg.Username
 	default:
 		log.Printf("Error: unknown message type '%s'", incomingMsg.MsgType)
 	}
