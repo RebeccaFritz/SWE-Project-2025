@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"time"
 	"math/rand"
+	"time"
 )
 
 func reflectGamestate(oldGS Gamestate) Gamestate {
@@ -74,11 +74,11 @@ func runGameLoop(printDebug bool, room *Room) {
 
 		if printDebug {
 			log.Println("Gamestate")
-			fmt.Printf("Projectiles: %+v\n", room.gamestate.Projectiles)
-			fmt.Printf("Input queue: %+v\n", room.inputQueue)
-			fmt.Printf("Targets: %+v\n", room.gamestate.Targets)
-			fmt.Printf("Player 1: %+v\n", room.gamestate.Player1)
-			fmt.Printf("Player 2: %+v\n\n", room.gamestate.Player2)
+			log.Printf("Projectiles: %+v\n", room.gamestate.Projectiles)
+			log.Printf("Input queue: %+v\n", room.inputQueue)
+			log.Printf("Targets: %+v\n", room.gamestate.Targets)
+			log.Printf("Player 1: %+v\n", room.gamestate.Player1)
+			log.Printf("Player 2: %+v\n\n", room.gamestate.Player2)
 		}
 	}
 
@@ -170,14 +170,19 @@ func updatePlayerPosition(p Player, direction string, isPlayer2 bool) Player {
 		rightSide = (p.X + p.Diameter/2)
 	}
 
-	//fmt.Println("move: (direction, p.X, p.left, p.right)", direction, p.X, leftSide, rightSide)
+	//log.Println("move: (direction, p.X, p.left, p.right)", direction, p.X, leftSide, rightSide)
 
 	if direction == "move_left" && leftSide > 0 {
 		p.X -= PLAYER_MOVE_LENGTH * P2mult
 	} else if direction == "move_right" && rightSide < CANVAS_WIDTH {
 		p.X += PLAYER_MOVE_LENGTH * P2mult
 	} else {
-		log.Printf("Error: invalid move direction '%s'\n", direction)
+		if leftSide>0 || rightSide < CANVAS_WIDTH {
+			log.Printf("Status: player tried to move out of bounds")
+		} else {
+			log.Printf("Error: invalid move direction '%s'\n", direction)
+		}
+
 	}
 
 	return p

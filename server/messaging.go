@@ -68,18 +68,18 @@ func handleRead(s *socket) (int, msgStruct, error) {
 		return msgType, msgStruct{}, err
 	}
 
-	// write the recieved message to a file
-	file, err := os.OpenFile("../server/server-messages.txt", os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Println(err)
-	}
-	clientName := "Client, Local Address: " + s.websocket.LocalAddr().String() + ", Remote Address: " + s.websocket.RemoteAddr().String()
-	date := "Date: " + time.Now().String()
-	received := "Received: " + string(message)
-	space := " "
-	fullMessage := clientName + "\n" + date + "\n" + received + "\n" + space
+	// // write the recieved message to a file
+	// file, err := os.OpenFile("../server/server-messages.txt", os.O_APPEND|os.O_WRONLY, 0644)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// clientName := "Client, Local Address: " + s.websocket.LocalAddr().String() + ", Remote Address: " + s.websocket.RemoteAddr().String()
+	// date := "Date: " + time.Now().String()
+	// received := "Received: " + string(message)
+	// space := " "
+	// fullMessage := clientName + "\n" + date + "\n" + received + "\n" + space
 
-	writeToFile(file, fullMessage)
+	// writeToFile(file, fullMessage)
 
 	// decode JSON data with Unmarshal function and store it in a temporary structure
 	var incomingMsg msgStruct
