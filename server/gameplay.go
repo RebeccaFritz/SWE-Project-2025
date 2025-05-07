@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"time"
+	"math/rand"
 )
 
 func reflectGamestate(oldGS Gamestate) Gamestate {
@@ -46,14 +47,18 @@ func updateLeaderboard(gs Gamestate, room *Room) {
 // runGameLoop updates the gamestate based on player input and writes it to the players in the room.
 // printDebug controls whether the gamestate is printed to the console
 func runGameLoop(printDebug bool, room *Room) {
+	if printDebug{
+		log.Println("Starting game with: ", room.clients[0].connection, " ",room.clients[1].connection)
+	}
+
 	for range time.Tick(TICK_DURATION) {
 		room.gamestate = updateGameState(room.gamestate, room.inputQueue)
 
 		msg := msgStruct{MsgType: "gamestate", Gamestate: room.gamestate}
-		handleWrite(1, msg, room.clients[0].connection)
+		handleWrite(1, msg, &room.clients[0].connection)
 
 		msg = msgStruct{MsgType: "gamestate", Gamestate: reflectGamestate(room.gamestate)}
-		handleWrite(1, msg, room.clients[1].connection)
+		handleWrite(1, msg, &room.clients[1].connection)
 
 		// Clear the applied player input
 		room.inputQueue = []InputQueueEntry{}
@@ -62,8 +67,8 @@ func runGameLoop(printDebug bool, room *Room) {
 			updateLeaderboard(deepCopyGamestate(room.gamestate), room)
 			LEADERBOARD = getLeaderboard(DB)
 
-			handleWrite(1, LEADERBOARD, room.clients[0].connection)
-			handleWrite(1, LEADERBOARD, room.clients[1].connection)
+			handleWrite(1, LEADERBOARD, &room.clients[0].connection)
+			handleWrite(1, LEADERBOARD, &room.clients[1].connection)
 			break
 		}
 
@@ -210,6 +215,7 @@ func handleProjectileTargetCollisions(projectiles []Projectile, targets []Target
 
 			if isColliding(targets[i], projectiles[j]) {
 				targets[i].Velocity += int(float64(projectiles[j].Velocity) * projectiles[j].ForceMult)
+				targets[i].Convert = rand.Intn(100)
 				projectiles[j].IsEnabled = false
 				projectiles[j].Velocity = 0
 			}

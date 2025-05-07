@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -13,6 +14,12 @@ var upgrader = websocket.Upgrader{
 		return true
 	},
 }
+
+type socket struct {
+	websocket 	*websocket.Conn
+	sync.Mutex
+}
+
 
 // function to handle WebSocket connections
 func wsHandler(writer http.ResponseWriter, request *http.Request) {
@@ -25,16 +32,16 @@ func wsHandler(writer http.ResponseWriter, request *http.Request) {
 
 	// create a new client structure with this websocket connection
 	client := Client{
-		connection: websocket,
+		connection: socket{websocket, sync.Mutex{}},
 		playerNum:  0, // set to player 0 (will be updated if client joins another room)
 	}
 
 	defer closeClient(websocket, &client)
 
-	CLIENTS[client.connection] = &client // add client to CLIENTS map
+	CLIENTS[client.connection.websocket] = &client // add client to CLIENTS map
 
-	handleWrite(1, LEADERBOARD, websocket) // write the leaderboard data (1 is the msgType constant for text)
-	handleMessaging(websocket)
+	handleWrite(1, LEADERBOARD, &client.connection) // write the leaderboard data (1 is the msgType constant for text)
+	handleMessaging(&client.connection)
 }
 
 func closeClient(websocket *websocket.Conn, client *Client) {
