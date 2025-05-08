@@ -10,18 +10,11 @@ function drawTargets(p, targets){
     p.fill(0);
     for (let i = 0; i < targets.length; i++){
        if (targets[i].IsEnabled){
-        p.fill(255)
-
-        p.stroke(255, 0, 77)
-        p.strokeWeight(5)
-        p.circle(targets[i].X, targets[i].Y, targets[i].Diameter + 25)
-        p.circle(targets[i].X, targets[i].Y, 10)
-
-        p.stroke(255)
-        p.strokeWeight(5)
-
-
         p.fill(0)
+
+        p.circle(targets[i].X, targets[i].Y, targets[i].Diameter + 25)
+
+        p.fill(255)
         p.textSize(14);
         let hex = "0x" + targets[i].Convert.toString(16)
         p.text(hex , targets[i].X -  p.textWidth(hex)/2 , targets[i].Y + 5);
@@ -33,12 +26,12 @@ function drawTargets(p, targets){
 function drawProjectiles(p, projectiles){
     p.stroke(100)
     p.strokeWeight(10)
-    p.fill(2550);
+    p.fill(255);
     for (let i = 0; i < projectiles.length; i++){
         if(projectiles[i].IsEnabled) {
-            p.ellipse(projectiles[i].X + p.random(-5, 5), projectiles[i].Y + p.random(-5, 5), 20, 20);
-            p.ellipse(projectiles[i].X + p.random(-5, 5), projectiles[i].Y + p.random(-5, 5), 20, 20);
-            p.ellipse(projectiles[i].X + p.random(-5, 5), projectiles[i].Y + p.random(-5, 5), 20, 20);
+            p.ellipse(projectiles[i].X + p.random(-3, 3), projectiles[i].Y + p.random(-3, 3), 10, 10);
+            p.ellipse(projectiles[i].X + p.random(-3, 3), projectiles[i].Y + p.random(-3, 3), 10, 10);
+            p.ellipse(projectiles[i].X + p.random(-3, 3), projectiles[i].Y + p.random(-3, 3), 10, 10);
         }
     }
     p.noStroke()
