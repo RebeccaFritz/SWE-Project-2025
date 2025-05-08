@@ -91,6 +91,19 @@ func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 	gs = deepCopyGamestate(gs)
 
 	gs = applyPlayerInputs(deepCopyGamestate(gs), input_queue)
+
+	hasTargets := false
+
+	for i:= range(gs.Targets){
+		if gs.Targets[i].IsEnabled{
+			hasTargets = true
+		}
+	}
+
+	if !hasTargets {
+		gs.Targets = initTargets()
+	}
+
 	updateProjectilePositions(gs.Projectiles)
 	updateTargetsPositions(gs.Targets)
 	handleProjectileTargetCollisions(gs.Projectiles, gs.Targets)
