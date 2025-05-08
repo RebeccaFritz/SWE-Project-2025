@@ -4,24 +4,24 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"time"
 	"math/rand"
+	"time"
 )
 
 func reflectGamestate(oldGS Gamestate) Gamestate {
 	gs := deepCopyGamestate(oldGS)
 
-	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y                             // vertical reflection
+	gs.Player1.Y, gs.Player2.Y = gs.Player2.Y, gs.Player1.Y                           // vertical reflection
 	gs.Player1.X, gs.Player2.X = CANVAS_WIDTH-gs.Player1.X, CANVAS_WIDTH-gs.Player2.X // horizontal reflection
 
 	for j := range gs.Projectiles {
 		gs.Projectiles[j].Y = CANVAS_HEIGHT - gs.Projectiles[j].Y // vertical reflection
-		gs.Projectiles[j].X = CANVAS_WIDTH - gs.Projectiles[j].X // horizontal reflection
+		gs.Projectiles[j].X = CANVAS_WIDTH - gs.Projectiles[j].X  // horizontal reflection
 	}
 
 	for j := range gs.Targets {
 		gs.Targets[j].Y = CANVAS_HEIGHT - gs.Targets[j].Y // vertical reflection
-		gs.Targets[j].X = CANVAS_WIDTH - gs.Targets[j].X // horizontal reflection
+		gs.Targets[j].X = CANVAS_WIDTH - gs.Targets[j].X  // horizontal reflection
 	}
 
 	return gs
@@ -47,8 +47,8 @@ func updateLeaderboard(gs Gamestate, room *Room) {
 // runGameLoop updates the gamestate based on player input and writes it to the players in the room.
 // printDebug controls whether the gamestate is printed to the console
 func runGameLoop(printDebug bool, room *Room) {
-	if printDebug{
-		log.Println("Starting game with: ", room.clients[0].connection, " ",room.clients[1].connection)
+	if printDebug {
+		log.Println("Starting game with: ", room.clients[0].connection, " ", room.clients[1].connection)
 	}
 
 	for range time.Tick(TICK_DURATION) {
@@ -94,8 +94,8 @@ func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 
 	hasTargets := false
 
-	for i:= range(gs.Targets){
-		if gs.Targets[i].IsEnabled{
+	for i := range gs.Targets {
+		if gs.Targets[i].IsEnabled {
 			hasTargets = true
 		}
 	}
@@ -106,6 +106,7 @@ func updateGameState(gs Gamestate, input_queue []InputQueueEntry) Gamestate {
 
 	updateProjectilePositions(gs.Projectiles)
 	updateTargetsPositions(gs.Targets)
+	resetDisabledTargets(gs.Targets)
 	handleProjectileTargetCollisions(gs.Projectiles, gs.Targets)
 	gs.Player1.Health, gs.Player2.Health = handleTargetPlayerCollisions(gs.Targets, gs.Player1, gs.Player2)
 
@@ -209,6 +210,18 @@ func updateProjectilePositions(projectiles []Projectile) {
 	for i := range projectiles {
 		if projectiles[i].IsEnabled {
 			projectiles[i].Y += projectiles[i].Velocity
+		}
+	}
+}
+
+// turn all disabled targets into a new target
+func resetDisabledTargets(targets []Target) {
+	for i := range targets {
+		if !(targets[i].IsEnabled) {
+			targets[i].Y = CANVAS_HEIGHT / 2
+			targets[i].Velocity = 0
+			targets[i].IsEnabled = true
+			targets[i].Convert = rand.Intn(100)
 		}
 	}
 }
